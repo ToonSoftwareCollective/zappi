@@ -22,6 +22,7 @@ App {
 	property int jsonZappiIndex
 	property int jsonZappiDevices
 	property int jsonZappiDeviceFases
+	property int jsonZappiSerial
 	property int jsonZappiGridImport
 	property int jsonZappiMode
 	property variant jsonZappiModeText: ["Unknown", "Fast","Eco","Eco+"]
@@ -69,6 +70,22 @@ App {
 	function changeZappiMode(zappiMode) {
 		// here a call to url to change zappi mode
 		jsonZappiMode = zappiMode
+		if (settings["hubSerial"].length > 0) {
+			var serialLastDigit = settings["hubSerial"].substr(settings["hubSerial"].length - 1)
+			var url =  "https://s" + serialLastDigit + ".myenergi.net/cgi-zappi-mode-Z" + jsonZappiSerial + "-" + zappiMode + "-0-0-0000"
+			console.log("Zappi set mode url: " + url)
+	        	var xmlhttp = new XMLHttpRequest()
+	        	xmlhttp.open("GET", url, true, settings["hubSerial"],settings["hubPassword"])
+			xmlhttp.setRequestHeader("Authorization","Digest realm=\"MyEnergi Telemetry\"");
+	        	xmlhttp.onreadystatechange = function() {
+	        		if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+	        	        	console.log("********* Zappi http status: " + xmlhttp.status)
+					console.log("********* Zappi headers received: " + xmlhttp.getAllResponseHeaders())
+					console.log("********* Zappi data received: " + xmlhttp.responseText)
+				}
+			}
+	        	xmlhttp.send()
+		}
 	}
 
 	function collectZappiData() {
@@ -93,6 +110,8 @@ App {
 								jsonZappiDeviceFases = 3
 								console.log("This Zappi has 3 fases!")
 							}
+							jsonZappiSerial = jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].sno
+							console.log("Zappi serial: " + jsonZappiSerial)
 							jsonZappiGridImport = jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].grd
 							console.log("Zappi grid import: " + jsonZappiGridImport)
  							jsonZappiMode = jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].zmo
@@ -112,7 +131,7 @@ App {
 
 	Timer {
 		id: collectData
-		interval: 300000
+		interval: 3000000
 		triggeredOnStart: true
 		running: false
 		repeat: true
