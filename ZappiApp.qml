@@ -72,39 +72,41 @@ App {
 	}
 
 	function collectZappiData() {
-		var serialLastDigit = settings["hubSerial"].substr(settings["hubSerial"].length -1)
-	        var xmlhttp = new XMLHttpRequest();
-	        xmlhttp.open("GET", "https://s" + serialLastDigit + ".myenergi.net/cgi-jstatus-*", true, settings["hubSerial"],settings["hubPassword"]);
-		xmlhttp.setRequestHeader("Authorization","Digest realm=\"MyEnergi Telemetry\"");
-	        xmlhttp.onreadystatechange = function() {
-	        	if (xmlhttp.readyState == XMLHttpRequest.DONE) {
-	                	console.log("********* Zappi http status: " + xmlhttp.status)
-				console.log("********* Zappi headers received: " + xmlhttp.getAllResponseHeaders())
-				console.log("********* Zappi data received: " + xmlhttp.responseText)
-				var jsonResult = JSON.parse(xmlhttp.responseText)
-				for (var i = 0;i < jsonResult.length; i++) {
-					//look for the zappi devices first
-					if ( jsonResult[i].zappi !== undefined) {
-						jsonZappiIndex = i
-						jsonZappiDevices = jsonResult[jsonZappiIndex].zappi.length //currently only one zappi is supported
-						jsonZappiDeviceFases = 1
-						if ( jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].ectt3 !== undefined) {
-							jsonZappiDeviceFases = 3
-							console.log("This Zappi has 3 fases!")
+		if (settings["hubSerial"].length > 0) {
+			var serialLastDigit = settings["hubSerial"].substr(settings["hubSerial"].length - 1)
+	        	var xmlhttp = new XMLHttpRequest();
+	        	xmlhttp.open("GET", "https://s" + serialLastDigit + ".myenergi.net/cgi-jstatus-*", true, settings["hubSerial"],settings["hubPassword"]);
+			xmlhttp.setRequestHeader("Authorization","Digest realm=\"MyEnergi Telemetry\"");
+	        	xmlhttp.onreadystatechange = function() {
+	        		if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+	        	        	console.log("********* Zappi http status: " + xmlhttp.status)
+					console.log("********* Zappi headers received: " + xmlhttp.getAllResponseHeaders())
+					console.log("********* Zappi data received: " + xmlhttp.responseText)
+					var jsonResult = JSON.parse(xmlhttp.responseText)
+					for (var i = 0;i < jsonResult.length; i++) {
+						//look for the zappi devices first
+						if ( jsonResult[i].zappi !== undefined) {
+							jsonZappiIndex = i
+							jsonZappiDevices = jsonResult[jsonZappiIndex].zappi.length //currently only one zappi is supported
+							jsonZappiDeviceFases = 1
+							if ( jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].ectt3 !== undefined) {
+								jsonZappiDeviceFases = 3
+								console.log("This Zappi has 3 fases!")
+							}
+							jsonZappiGridImport = jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].grd
+							console.log("Zappi grid import: " + jsonZappiGridImport)
+ 							jsonZappiMode = jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].zmo
+							console.log("Zappi mode: " + jsonZappiMode)
+							jsonZappiStatus = jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].sta 
+							console.log("Zappi status: " + jsonZappiStatus)
+							jsonZappiChargedkWh = jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].che
+							console.log("Zappi charged kwh: " + jsonZappiChargedkWh)
 						}
-						jsonZappiGridImport = jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].grd
-						console.log("Zappi grid import: " + jsonZappiGridImport)
- 						jsonZappiMode = jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].zmo
-						console.log("Zappi mode: " + jsonZappiMode)
-						jsonZappiStatus = jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].sta 
-						console.log("Zappi status: " + jsonZappiStatus)
-						jsonZappiChargedkWh = jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].che
-						console.log("Zappi charged kwh: " + jsonZappiChargedkWh)
 					}
 				}
 			}
+	        	xmlhttp.send();
 		}
-	        xmlhttp.send();
 	}
 
 
