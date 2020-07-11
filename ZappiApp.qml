@@ -24,6 +24,7 @@ App {
 	property int jsonZappiDeviceFases
 	property int jsonZappiSerial
 	property int jsonZappiGridImport
+	property int jsonZappiCharging
 	property int jsonZappiMode
 	property variant jsonZappiModeText: ["Unknown", "Fast","Eco","Eco+"]
 	property int jsonZappiStatus
@@ -110,6 +111,10 @@ App {
 								jsonZappiDeviceFases = 3
 								console.log("This Zappi has 3 fases!")
 							}
+							if ( jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].div !== undefined) {
+								jsonZappiCharging = jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].div
+							}
+							console.log("Zappi charging: " + jsonZappiCharging)
 							jsonZappiSerial = jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].sno
 							console.log("Zappi serial: " + jsonZappiSerial)
 							jsonZappiGridImport = jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].grd

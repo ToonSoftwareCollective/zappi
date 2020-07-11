@@ -45,11 +45,25 @@ Tile {
         }
 
         Text {
+                id: txtZappiCharging
+                text: "Charging: " + app.jsonZappiCharging + " Watt"
+               	color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor 
+                anchors {
+                        top: txtZappiGridImport.bottom
+                        topMargin: 0
+                        horizontalCenter: parent.horizontalCenter
+                }
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: 20
+                font.family: qfont.regular.name
+        }
+
+        Text {
                 id: txtZappiMode
                 text: "Mode: " + app.jsonZappiModeText[app.jsonZappiMode]
                	color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor 
                 anchors {
-                        top: txtZappiGridImport.bottom
+                        top: txtZappiCharging.bottom
                         topMargin: 0
                         horizontalCenter: parent.horizontalCenter
                 }
@@ -87,6 +101,10 @@ Tile {
                 font.family: qfont.regular.name
         }
 
-
+        Image {
+                id: zappiIcon
+                anchors.centerIn: parent
+                source: "qrc://scaled/tsc/car-charge-0.svg"
+        }
 
 }
