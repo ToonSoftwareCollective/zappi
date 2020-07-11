@@ -44,7 +44,7 @@ Screen {
                         id: serialNumberInput
 	                anchors {
 	                        top: parent.top
-	                        topMargin : 100
+	                        topMargin : 80 
 	                        left: parent.left
 	                        leftMargin: isNxt ? 100 : 80
 	                        right: parent.right

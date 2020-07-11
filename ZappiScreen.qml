@@ -175,7 +175,7 @@ Item {
                         horizontalCenter: parent.horizontalCenter
                 }
                 horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: 30
+                font.pixelSize: isNxt ? 30 : 20 
                 font.family: qfont.regular.name
         }
 
@@ -189,7 +189,7 @@ Item {
                         horizontalCenter: parent.horizontalCenter
                 }
                 horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: 30
+                font.pixelSize: isNxt ? 30 : 20 
                 font.family: qfont.regular.name
         }
 
@@ -204,7 +204,7 @@ Item {
                         horizontalCenter: parent.horizontalCenter
                 }
                 horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: 30
+                font.pixelSize: isNxt ? 30 : 20 
                 font.family: qfont.regular.name
         }
 
@@ -219,7 +219,7 @@ Item {
                         horizontalCenter: parent.horizontalCenter
                 }
                 horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: 30
+                font.pixelSize: isNxt ? 30 : 20 
                 font.family: qfont.regular.name
         }
 
@@ -233,7 +233,7 @@ Item {
                         horizontalCenter: parent.horizontalCenter
                 }
                 horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: 30
+                font.pixelSize: isNxt ? 30 : 20 
                 font.family: qfont.regular.name
         }
 

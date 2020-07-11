@@ -63,7 +63,7 @@ Tile {
 
         Image {
                 id: zappiIcon
-		scale: 0.3
+		scale: isNxt ? 0.3 : 0.2
                 anchors.centerIn: parent
                 source: "qrc:/tsc/car-charge-"+(p.currentFrame+1) + (dimState ? "-dim" : "" ) + ".svg"
         }
