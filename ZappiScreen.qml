@@ -25,7 +25,7 @@ Screen {
         StandardButton {
                 id: btnConfigScreen
                 width: 150
-                text: "Instellingen"
+                text: "Settings"
                 anchors.top : mainRectangle.top
                 anchors.right : mainRectangle.right
                 anchors.rightMargin : 10
