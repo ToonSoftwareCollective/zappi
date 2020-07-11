@@ -7,11 +7,42 @@ import BasicUIControls 1.0;
 Tile {
 	id: zappiTile
 
+        QtObject {
+                id: p
+		property int numFrames: 10 
+		property int currentFrame: -1 
+
+		function update() {
+			if ( (isNaN(app.zappiCharging)) || (app.zappiCharging === 0) ) {
+				animationTimer.stop()
+				p.currentFrame = -1
+			} else {
+				animationTimer.interval = 100 
+				if (app.zappiCharging < 6000) {
+					animationTimer.interval = 200 
+				}
+				if (app.zappiCharging < 4000) {
+					animationTimer.interval = 400 
+				}
+				if (app.zappiCharging < 2000) {
+					animationTimer.interval = 800 
+				}
+				animationTimer.restart();
+			}
+		}
+	}
+
+
 	// Will be called when widget instantiated
-	function init() {}
+	function init() {
+                app.zappiChargingChanged.connect(p.update);
+        }
+
+        Component.onDestruction: app.zappiChargingChanged.disconnect(p.update);
+
 
         onClicked: {
-                stage.openFullscreen(app.zappiScreenUrl);
+                stage.openFullscreen(app.zappiScreenUrl)
         }
 
 
@@ -30,41 +61,20 @@ Tile {
 		text: "Zappi" 
 	}
 
-        Text {
-                id: txtZappiGridImport
-                text: "Grid: " + app.jsonZappiGridImport + " Watt"
-               	color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor 
-                anchors {
-                        top: tileTitle.bottom
-                        topMargin: 0
-                        horizontalCenter: parent.horizontalCenter
-                }
-                horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: 20
-                font.family: qfont.regular.name
-        }
-
-        Text {
-                id: txtZappiCharging
-                text: "Charging: " + app.jsonZappiCharging + " Watt"
-               	color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor 
-                anchors {
-                        top: txtZappiGridImport.bottom
-                        topMargin: 0
-                        horizontalCenter: parent.horizontalCenter
-                }
-                horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: 20
-                font.family: qfont.regular.name
+        Image {
+                id: zappiIcon
+		scale: 0.3
+                anchors.centerIn: parent
+                source: "qrc:/tsc/car-charge-"+(p.currentFrame+1) + (dimState ? "-dim" : "" ) + ".svg"
         }
 
         Text {
                 id: txtZappiMode
-                text: "Mode: " + app.jsonZappiModeText[app.jsonZappiMode]
+                text: app.zappiModeText[app.zappiMode]
                	color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor 
                 anchors {
-                        top: txtZappiCharging.bottom
-                        topMargin: 0
+                        bottom: parent.bottom 
+                        bottomMargin: 10
                         horizontalCenter: parent.horizontalCenter
                 }
                 horizontalAlignment: Text.AlignHCenter
@@ -72,39 +82,13 @@ Tile {
                 font.family: qfont.regular.name
         }
 
-
-        Text {
-                id: txtZappiStatus
-                text: "Status: " + app.jsonZappiStatusText[app.jsonZappiStatus]
-               	color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor 
-                anchors {
-                        top: txtZappiMode.bottom
-                        topMargin: 0
-                        horizontalCenter: parent.horizontalCenter
-                }
-                horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: 20
-                font.family: qfont.regular.name
+        Timer {
+                id: animationTimer
+                interval: 1000
+                repeat: true
+                onTriggered: (p.currentFrame = ((p.currentFrame + 1) % p.numFrames))
         }
 
-        Text {
-                id: txtZappiChargekWh
-                text: "Charged: " + app.jsonZappiChargedkWh + " kWh"
-              	color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor 
-                anchors {
-                        top: txtZappiStatus.bottom
-                        topMargin: 0
-                        horizontalCenter: parent.horizontalCenter
-                }
-                horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: 20
-                font.family: qfont.regular.name
-        }
 
-        Image {
-                id: zappiIcon
-                anchors.centerIn: parent
-                source: "qrc://scaled/tsc/car-charge-0.svg"
-        }
 
 }

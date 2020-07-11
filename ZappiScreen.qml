@@ -56,7 +56,7 @@ Screen {
 		id: zappiModeEco 
 		width: 150
 		text: "Eco"
-		primary: app.jsonZappiMode === 2 ? true : false
+		primary: app.zappiMode === 2 ? true : false
 		anchors.top : zappiModeTitle.bottom
 		anchors.topMargin : 10 
 		anchors.horizontalCenter: mainRectangle.horizontalCenter
@@ -68,7 +68,7 @@ Screen {
 		id: zappiModeFase
 		width: 150
 		text: "Fast"
-		primary: app.jsonZappiMode === 1 ? true : false
+		primary: app.zappiMode === 1 ? true : false
 		anchors.top : zappiModeTitle.bottom
 		anchors.topMargin : 10 
 		anchors.right : zappiModeEco.left
@@ -81,7 +81,7 @@ Screen {
 		id: zappiModeEcoPlus
 		width: 150
 		text: "Eco+"
-		primary: app.jsonZappiMode === 3 ? true : false
+		primary: app.zappiMode === 3 ? true : false
 		anchors.top : zappiModeTitle.bottom
 		anchors.topMargin : 10 
 		anchors.left : zappiModeEco.right
@@ -90,5 +90,78 @@ Screen {
 			app.changeZappiMode(3)
 		}
 	}
+
+        Text {
+                id: txtZappiGridImport
+                text: "Grid: " + app.zappiGridImport + " Watt"
+                color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor
+                anchors {
+                        top: zappiModeEco.bottom
+                        topMargin: 10
+                        horizontalCenter: parent.horizontalCenter
+                }
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: 40
+                font.family: qfont.regular.name
+        }
+
+        Text {
+                id: txtZappiCharging
+                text: "Charging: " + app.zappiCharging + " Watt"
+                color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor
+                anchors {
+                        top: txtZappiGridImport.bottom
+                        topMargin: 0
+                        horizontalCenter: parent.horizontalCenter
+                }
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: 40
+                font.family: qfont.regular.name
+        }
+
+
+        Text {
+                id: txtZappiMode
+                text: "Mode: " + app.zappiModeText[app.zappiMode]
+                color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor
+                anchors {
+                        top: txtZappiCharging.bottom
+                        topMargin: 0
+                        horizontalCenter: parent.horizontalCenter
+                }
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: 40
+                font.family: qfont.regular.name
+        }
+
+
+        Text {
+                id: txtZappiStatus
+                text: "Status: " + app.zappiStatusText[app.zappiStatus]
+                color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor
+                anchors {
+                        top: txtZappiMode.bottom
+                        topMargin: 0
+                        horizontalCenter: parent.horizontalCenter
+                }
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: 40
+                font.family: qfont.regular.name
+        }
+
+        Text {
+                id: txtZappiChargekWh
+                text: "Charged: " + app.zappiChargedkWh + " kWh"
+                color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor
+                anchors {
+                        top: txtZappiStatus.bottom
+                        topMargin: 0
+                        horizontalCenter: parent.horizontalCenter
+                }
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: 40
+                font.family: qfont.regular.name
+        }
+
 
 }

@@ -19,17 +19,17 @@ App {
 		"hubSerial" : "", 
 		"hubPassword" : "", 
 	}
-	property int jsonZappiIndex
-	property int jsonZappiDevices
-	property int jsonZappiDeviceFases
-	property int jsonZappiSerial
-	property int jsonZappiGridImport
-	property int jsonZappiCharging
-	property int jsonZappiMode
-	property variant jsonZappiModeText: ["Unknown", "Fast","Eco","Eco+"]
-	property int jsonZappiStatus
-	property variant jsonZappiStatusText: ["Unknown", "Paused","Charging","Completed"]
-	property int jsonZappiChargedkWh
+	property int zappiIndex
+	property int zappiDevices
+	property int zappiDeviceFases
+	property int zappiSerial
+	property int zappiGridImport
+	property int zappiCharging
+	property int zappiMode
+	property variant zappiModeText: ["Unknown", "Fast","Eco","Eco+"]
+	property int zappiStatus
+	property variant zappiStatusText: ["Unknown", "Paused","Charging","Completed"]
+	property int zappiChargedkWh
 
 	function init() {
 		registry.registerWidget("screen", zappiScreenUrl, this);
@@ -70,10 +70,10 @@ App {
 
 	function changeZappiMode(zappiMode) {
 		// here a call to url to change zappi mode
-		jsonZappiMode = zappiMode
+		zappiMode = zappiMode
 		if (settings["hubSerial"].length > 0) {
 			var serialLastDigit = settings["hubSerial"].substr(settings["hubSerial"].length - 1)
-			var url =  "https://s" + serialLastDigit + ".myenergi.net/cgi-zappi-mode-Z" + jsonZappiSerial + "-" + zappiMode + "-0-0-0000"
+			var url =  "https://s" + serialLastDigit + ".myenergi.net/cgi-zappi-mode-Z" + zappiSerial + "-" + zappiMode + "-0-0-0000"
 			console.log("Zappi set mode url: " + url)
 	        	var xmlhttp = new XMLHttpRequest()
 	        	xmlhttp.open("GET", url, true, settings["hubSerial"],settings["hubPassword"])
@@ -104,27 +104,28 @@ App {
 					for (var i = 0;i < jsonResult.length; i++) {
 						//look for the zappi devices first
 						if ( jsonResult[i].zappi !== undefined) {
-							jsonZappiIndex = i
-							jsonZappiDevices = jsonResult[jsonZappiIndex].zappi.length //currently only one zappi is supported
-							jsonZappiDeviceFases = 1
-							if ( jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].ectt3 !== undefined) {
-								jsonZappiDeviceFases = 3
+							zappiIndex = i
+							zappiDevices = jsonResult[zappiIndex].zappi.length //currently only one zappi is supported
+							zappiDeviceFases = 1
+							if ( jsonResult[zappiIndex].zappi[zappiDevices-1].ectt3 !== undefined) {
+								zappiDeviceFases = 3
 								console.log("This Zappi has 3 fases!")
 							}
-							if ( jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].div !== undefined) {
-								jsonZappiCharging = jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].div
+							if ( jsonResult[zappiIndex].zappi[zappiDevices-1].div !== undefined) {
+								zappiCharging = jsonResult[zappiIndex].zappi[zappiDevices-1].div
 							}
-							console.log("Zappi charging: " + jsonZappiCharging)
-							jsonZappiSerial = jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].sno
-							console.log("Zappi serial: " + jsonZappiSerial)
-							jsonZappiGridImport = jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].grd
-							console.log("Zappi grid import: " + jsonZappiGridImport)
- 							jsonZappiMode = jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].zmo
-							console.log("Zappi mode: " + jsonZappiMode)
-							jsonZappiStatus = jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].sta 
-							console.log("Zappi status: " + jsonZappiStatus)
-							jsonZappiChargedkWh = jsonResult[jsonZappiIndex].zappi[jsonZappiDevices-1].che
-							console.log("Zappi charged kwh: " + jsonZappiChargedkWh)
+							console.log("Zappi charging: " + zappiCharging)
+							zappiSerial = jsonResult[zappiIndex].zappi[zappiDevices-1].sno
+							console.log("Zappi serial: " + zappiSerial)
+							zappiGridImport = jsonResult[zappiIndex].zappi[zappiDevices-1].grd
+							//test zappiCharging = Math.abs(zappiGridImport) //test
+							console.log("Zappi grid import: " + zappiGridImport)
+ 							zappiMode = jsonResult[zappiIndex].zappi[zappiDevices-1].zmo
+							console.log("Zappi mode: " + zappiMode)
+							zappiStatus = jsonResult[zappiIndex].zappi[zappiDevices-1].sta 
+							console.log("Zappi status: " + zappiStatus)
+							zappiChargedkWh = jsonResult[zappiIndex].zappi[zappiDevices-1].che
+							console.log("Zappi charged kwh: " + zappiChargedkWh)
 						}
 					}
 				}
@@ -136,7 +137,7 @@ App {
 
 	Timer {
 		id: collectData
-		interval: 3000000
+		interval: 300000
 		triggeredOnStart: true
 		running: false
 		repeat: true
