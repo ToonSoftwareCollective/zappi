@@ -90,10 +90,15 @@ App {
 		}
 	}
 
-	function changeZappiMinGreenLevel(newZappiMinGreenLevel) {
-		// here a call to url to change zappi mode
+	function changeZappiMinGreenLevelDelayed(newZappiMinGreenLevel) {
+		// delay command to zappi api because slider will call this routine while changing very often 
 		zappiMinGreenLevel = newZappiMinGreenLevel 
-		// need some delay in here
+		delayTimer.restart();
+	}
+
+	function changeZappiMinGreenLevel(newZappiMinGreenLevel) {
+		// here a call to url to change zappi mgl
+		zappiMinGreenLevel = newZappiMinGreenLevel 
 		if (settings["hubSerial"].length > 0) {
 			var serialLastDigit = settings["hubSerial"].substr(settings["hubSerial"].length - 1)
 			var url =  "https://s" + serialLastDigit + ".myenergi.net/cgi-set-min-green-Z" + zappiSerial + "-" + zappiMinGreenLevel
@@ -169,6 +174,16 @@ App {
 		onTriggered: {
 			// update interval to only update at the start of the next hour
 			collectZappiData();
+		}
+	}
+	Timer {
+		id: delayTimer
+		interval: 2000
+		triggeredOnStart: false
+		running: false
+		repeat: false
+		onTriggered: {
+			changeZappiMinGreenLevel(zappiMinGreenLevel);
 		}
 	}
 

@@ -134,7 +134,7 @@ Item {
 	onClicked: {
             var pos = Math.round(mouse.x / slider.width * (slider.maximum - slider.minimum) + slider.minimum)
             slider.value = pos
-	    app.changeZappiMinGreenLevel(slider.value)
+	    app.changeZappiMinGreenLevelDelayed(slider.value)
         }
 
     }
@@ -160,7 +160,7 @@ Item {
         MouseArea {
             anchors.fill: parent; drag.target: parent
             drag.axis: Drag.XAxis; drag.minimumX: 2; drag.maximumX: slider.xMax+2
-            onPositionChanged: { slider.value = Math.round((slider.maximum - slider.minimum) * (handle.x-2) / slider.xMax + slider.minimum ); app.changeZappiMinGreenLevel(slider.value) }
+            onPositionChanged: { slider.value = Math.round((slider.maximum - slider.minimum) * (handle.x-2) / slider.xMax + slider.minimum ); app.changeZappiMinGreenLevelDelayed(slider.value) }
         }
     }
 }
