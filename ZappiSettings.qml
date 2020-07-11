@@ -13,10 +13,10 @@ Screen {
 	property bool firstShown: true;  // we need this because exiting a keyboard will load onShown again. Without this the input will be overwritten with the app settings again
 
 
-	screenTitle: "Zappi configuratie"
+	screenTitle: "Zappi configuration"
 
 	onShown: {
-		addCustomTopRightButton("Opslaan");
+		addCustomTopRightButton("Save");
 		if (firstShown) {  // only update the input boxes if this is the first time shown, not while coming back from a keyboard input
 			firstShown = false;
 		}
