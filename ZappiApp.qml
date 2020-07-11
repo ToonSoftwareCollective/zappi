@@ -9,7 +9,7 @@ App {
 	// preventing problems when passing them around to code that comes from a different path.
 	//property url trayUrl : "SpotenergyTray.qml";
 	property url tileUrl : "ZappiTile.qml";
-	property url thumbnailIcon: "http:////localhost/rsc/ZappiIcon.png"
+	property url thumbnailIcon: "qrc:/tsc/zappiicon.png"
 	property url zappiScreenUrl : "ZappiScreen.qml"
 	property url zappiSettingsUrl : "ZappiSettings.qml"
         property ZappiSettings zappiSettings

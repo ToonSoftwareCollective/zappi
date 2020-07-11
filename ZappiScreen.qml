@@ -4,9 +4,9 @@ import qb.components 1.0
 
 Screen {
 	id: zappiScreen
-	screenTitleIconUrl: "qrc:/tsc/zappiIcon.png"
+	screenTitleIconUrl: "qrc:/tsc/zappiicon.png"
 
-	screenTitle: "MyEnergy Zappi EV charger"
+	screenTitle: "myenergi Zappi EV charger"
 
 	Rectangle {
 		id: mainRectangle
