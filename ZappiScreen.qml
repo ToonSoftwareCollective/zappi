@@ -128,19 +128,39 @@ Item {
             GradientStop { position: 1.0; color: "#66000000" }
         }
     }
+    
+    MouseArea {
+	anchors.fill: parent
+	onClicked: {
+            var pos = Math.round(mouse.x / slider.width * (slider.maximum - slider.minimum) + slider.minimum)
+            slider.value = pos
+	    app.changeZappiMinGreenLevel(slider.value)
+        }
+
+    }
 
     Rectangle {
         id: handle; smooth: true
-        x: slider.width / 2 - handle.width / 2; y: 2; width: 30; height: slider.height-4; radius: 6
+        x: slider.width / 2 - handle.width / 2; y: 2; width: 50; height: slider.height-4; radius: 6
         gradient: Gradient {
             GradientStop { position: 0.0; color: "lightgreen" }
             GradientStop { position: 1.0; color: "green" }
         }
 
+	Text {
+		id: sliderText
+		text: slider.value
+                font.pixelSize: 20
+                anchors.horizontalCenter: parent.horizontalCenter
+		anchors.verticalCenter: parent.verticalCenter 
+                font.family: qfont.regular.name
+                color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor
+	}
+
         MouseArea {
             anchors.fill: parent; drag.target: parent
             drag.axis: Drag.XAxis; drag.minimumX: 2; drag.maximumX: slider.xMax+2
-            onPositionChanged: { value = (maximum - minimum) * (handle.x-2) / slider.xMax + minimum; }
+            onPositionChanged: { slider.value = Math.round((slider.maximum - slider.minimum) * (handle.x-2) / slider.xMax + slider.minimum ); app.changeZappiMinGreenLevel(slider.value) }
         }
     }
 }

@@ -69,12 +69,34 @@ App {
 		collectData.restart()
 	}
 
-	function changeZappiMode(zappiMode) {
+	function changeZappiMode(newZappiMode) {
 		// here a call to url to change zappi mode
-		zappiMode = zappiMode
+		zappiMode = newZappiMode
 		if (settings["hubSerial"].length > 0) {
 			var serialLastDigit = settings["hubSerial"].substr(settings["hubSerial"].length - 1)
 			var url =  "https://s" + serialLastDigit + ".myenergi.net/cgi-zappi-mode-Z" + zappiSerial + "-" + zappiMode + "-0-0-0000"
+			console.log("Zappi set mode url: " + url)
+	        	var xmlhttp = new XMLHttpRequest()
+	        	xmlhttp.open("GET", url, true, settings["hubSerial"],settings["hubPassword"])
+			xmlhttp.setRequestHeader("Authorization","Digest realm=\"MyEnergi Telemetry\"");
+	        	xmlhttp.onreadystatechange = function() {
+	        		if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+	        	        	console.log("********* Zappi http status: " + xmlhttp.status)
+					console.log("********* Zappi headers received: " + xmlhttp.getAllResponseHeaders())
+					console.log("********* Zappi data received: " + xmlhttp.responseText)
+				}
+			}
+	        	xmlhttp.send()
+		}
+	}
+
+	function changeZappiMinGreenLevel(newZappiMinGreenLevel) {
+		// here a call to url to change zappi mode
+		zappiMinGreenLevel = newZappiMinGreenLevel 
+		// need some delay in here
+		if (settings["hubSerial"].length > 0) {
+			var serialLastDigit = settings["hubSerial"].substr(settings["hubSerial"].length - 1)
+			var url =  "https://s" + serialLastDigit + ".myenergi.net/cgi-set-min-green-Z" + zappiSerial + "-" + zappiMinGreenLevel
 			console.log("Zappi set mode url: " + url)
 	        	var xmlhttp = new XMLHttpRequest()
 	        	xmlhttp.open("GET", url, true, settings["hubSerial"],settings["hubPassword"])
@@ -128,7 +150,7 @@ App {
 							zappiChargedkWh = jsonResult[zappiIndex].zappi[zappiDevices-1].che
 							console.log("Zappi charged kwh: " + zappiChargedkWh)
 							zappiMinGreenLevel = jsonResult[zappiIndex].zappi[zappiDevices-1].mgl
-  							console.log("Zappi charged kwh: " + zappiMinGreenLevel)
+  							console.log("Zappi min green level: " + zappiMinGreenLevel)
 						}
 					}
 				}
