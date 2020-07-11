@@ -30,6 +30,7 @@ App {
 	property int zappiStatus
 	property variant zappiStatusText: ["Unknown", "Paused","Charging","Completed"]
 	property int zappiChargedkWh
+	property int zappiMinGreenLevel
 
 	function init() {
 		registry.registerWidget("screen", zappiScreenUrl, this);
@@ -126,6 +127,8 @@ App {
 							console.log("Zappi status: " + zappiStatus)
 							zappiChargedkWh = jsonResult[zappiIndex].zappi[zappiDevices-1].che
 							console.log("Zappi charged kwh: " + zappiChargedkWh)
+							zappiMinGreenLevel = jsonResult[zappiIndex].zappi[zappiDevices-1].mgl
+  							console.log("Zappi charged kwh: " + zappiMinGreenLevel)
 						}
 					}
 				}
