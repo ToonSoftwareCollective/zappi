@@ -168,7 +168,7 @@ App {
 
 	Timer {
 		id: collectData
-		interval: 10000
+		interval: 60000
 		triggeredOnStart: true
 		running: false
 		repeat: true
