@@ -146,7 +146,6 @@ App {
 							zappiSerial = jsonResult[zappiIndex].zappi[zappiDevices-1].sno
 							console.log("Zappi serial: " + zappiSerial)
 							zappiGridImport = jsonResult[zappiIndex].zappi[zappiDevices-1].grd
-							//test zappiCharging = Math.abs(zappiGridImport) //test
 							console.log("Zappi grid import: " + zappiGridImport)
  							zappiMode = jsonResult[zappiIndex].zappi[zappiDevices-1].zmo
 							console.log("Zappi mode: " + zappiMode)
@@ -156,6 +155,8 @@ App {
 							console.log("Zappi charged kwh: " + zappiChargedkWh)
 							zappiMinGreenLevel = jsonResult[zappiIndex].zappi[zappiDevices-1].mgl
   							console.log("Zappi min green level: " + zappiMinGreenLevel)
+							//test zappiCharging = Math.round((Math.random() * 8000)) //test
+							//test zappiChargedkWh = 15 //test
 						}
 					}
 				}
@@ -167,7 +168,7 @@ App {
 
 	Timer {
 		id: collectData
-		interval: 300000
+		interval: 10000
 		triggeredOnStart: true
 		running: false
 		repeat: true

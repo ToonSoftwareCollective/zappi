@@ -82,12 +82,42 @@ Tile {
                 font.family: qfont.regular.name
         }
 
+        Text {
+                id: txtCharging
+                text: Math.round(app.zappiCharging / 100) / 10 + "kW"
+		visible: animationTimer.running 
+               	color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor 
+                anchors {
+                        bottom: parent.bottom 
+                        bottomMargin: 40
+                        left: parent.left
+			leftMargin: 10
+                }
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: 25 
+                font.family: qfont.regular.name
+        }
+
+        Text {
+                id: txtChargedkWh
+                text: app.zappiChargedkWh + "kWh"
+		visible: animationTimer.running 
+               	color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor 
+                anchors {
+                        bottom: parent.bottom 
+                        bottomMargin: 40
+                        right: parent.right
+  			rightMargin: 10
+                }
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: 25 
+                font.family: qfont.regular.name
+        }
+
         Timer {
                 id: animationTimer
                 interval: 1000
                 repeat: true
                 onTriggered: (p.currentFrame = ((p.currentFrame + 1) % p.numFrames))
         }
-
-
 }
