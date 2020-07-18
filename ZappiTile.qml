@@ -89,12 +89,12 @@ Tile {
                	color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor 
                 anchors {
                         bottom: parent.bottom 
-                        bottomMargin: 40
+                        bottomMargin: isNxt ? 40 : 38
                         left: parent.left
 			leftMargin: 10
                 }
                 horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: 25 
+                font.pixelSize: isNxt ? 25 : 15
                 font.family: qfont.regular.name
         }
 
@@ -105,12 +105,12 @@ Tile {
                	color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor 
                 anchors {
                         bottom: parent.bottom 
-                        bottomMargin: 40
+                        bottomMargin: isNxt ? 40 : 38
                         right: parent.right
   			rightMargin: 10
                 }
                 horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: 25 
+                font.pixelSize: isNxt ? 25 : 15
                 font.family: qfont.regular.name
         }
 
