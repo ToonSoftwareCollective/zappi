@@ -1,5 +1,6 @@
 1.1.0
 -add charge Watt and charged kWh to tile info during charging
+-add valid login detection
 -change refresh timer from 300 to 60 sec
 
 1.0.0
