@@ -31,6 +31,7 @@ App {
 	property variant zappiStatusText: ["Unknown", "Paused","Charging","Completed"]
 	property int zappiChargedkWh
 	property int zappiMinGreenLevel
+	property bool zappiValidLogin: false
 
 	function init() {
 		registry.registerWidget("screen", zappiScreenUrl, this);
@@ -66,6 +67,7 @@ App {
                 var saveFile = new XMLHttpRequest();
                 saveFile.open("PUT", "file:///mnt/data/tsc/zappi.userSettings.json");
                 saveFile.send(JSON.stringify(settings));
+		// restart the timer to try to login with new settings
 		collectData.restart()
 	}
 
@@ -118,6 +120,7 @@ App {
 	}
 
 	function collectZappiData() {
+		console.log("Zappi collecting data");
 		if (settings["hubSerial"].length > 0) {
 			var serialLastDigit = settings["hubSerial"].substr(settings["hubSerial"].length - 1)
 	        	var xmlhttp = new XMLHttpRequest();
@@ -128,6 +131,15 @@ App {
 	        	        	console.log("********* Zappi http status: " + xmlhttp.status)
 					console.log("********* Zappi headers received: " + xmlhttp.getAllResponseHeaders())
 					console.log("********* Zappi data received: " + xmlhttp.responseText)
+					if (xmlhttp.status !== 200) {
+						collectData.interval = collectData.interval * 2  //this will slowly increase to make sure we don't flood the server with bad logins
+						if (collectData.interval > 3600000) { collectData.interval = 3600000 } //max at 1 hour interval
+						zappiValidLogin = false
+						return
+					}
+					// we have a valid login, set a faster timer if not already set 
+					zappiValidLogin = true
+					collectData.interval = 60000 //collect once a minute
 					var jsonResult = JSON.parse(xmlhttp.responseText)
 					for (var i = 0;i < jsonResult.length; i++) {
 						//look for the zappi devices first
@@ -168,9 +180,9 @@ App {
 
 	Timer {
 		id: collectData
-		interval: 60000
+		interval: 300000 //this is the start interval. interval is changes with valid login or increases when bad logins are detected
 		triggeredOnStart: true
-		running: false
+	 	running: false
 		repeat: true
 		onTriggered: {
 			// update interval to only update at the start of the next hour

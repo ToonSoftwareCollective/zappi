@@ -38,6 +38,22 @@ Screen {
         }
 
 	Text {
+		id: zappiBadLogin
+		visible: ! app.zappiValidLogin
+  		anchors {
+			baseline: mainRectangle.top
+			baselineOffset: 40
+			horizontalCenter: mainRectangle.horizontalCenter
+		}
+		font {
+			family: qfont.regular.name
+			pixelSize: 35 
+		}
+		color: "red" 
+		text: "Not a valid login provided!"
+	}
+
+	Text {
 		id: zappiModeTitle
 		anchors {
 			baseline: mainRectangle.top
