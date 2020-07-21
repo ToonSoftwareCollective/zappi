@@ -77,15 +77,15 @@ App {
 		if (settings["hubSerial"].length > 0) {
 			var serialLastDigit = settings["hubSerial"].substr(settings["hubSerial"].length - 1)
 			var url =  "https://s" + serialLastDigit + ".myenergi.net/cgi-zappi-mode-Z" + zappiSerial + "-" + zappiMode + "-0-0-0000"
-			console.log("Zappi set mode url: " + url)
+			//console.log("Zappi set mode url: " + url)
 	        	var xmlhttp = new XMLHttpRequest()
 	        	xmlhttp.open("GET", url, true, settings["hubSerial"],settings["hubPassword"])
 			xmlhttp.setRequestHeader("Authorization","Digest realm=\"MyEnergi Telemetry\"");
 	        	xmlhttp.onreadystatechange = function() {
 	        		if (xmlhttp.readyState == XMLHttpRequest.DONE) {
-	        	        	console.log("********* Zappi http status: " + xmlhttp.status)
-					console.log("********* Zappi headers received: " + xmlhttp.getAllResponseHeaders())
-					console.log("********* Zappi data received: " + xmlhttp.responseText)
+	        	        	//console.log("********* Zappi http status: " + xmlhttp.status)
+					//console.log("********* Zappi headers received: " + xmlhttp.getAllResponseHeaders())
+					//console.log("********* Zappi data received: " + xmlhttp.responseText)
 				}
 			}
 	        	xmlhttp.send()
@@ -104,15 +104,15 @@ App {
 		if (settings["hubSerial"].length > 0) {
 			var serialLastDigit = settings["hubSerial"].substr(settings["hubSerial"].length - 1)
 			var url =  "https://s" + serialLastDigit + ".myenergi.net/cgi-set-min-green-Z" + zappiSerial + "-" + zappiMinGreenLevel
-			console.log("Zappi set mode url: " + url)
+			//console.log("Zappi set mode url: " + url)
 	        	var xmlhttp = new XMLHttpRequest()
 	        	xmlhttp.open("GET", url, true, settings["hubSerial"],settings["hubPassword"])
 			xmlhttp.setRequestHeader("Authorization","Digest realm=\"MyEnergi Telemetry\"");
 	        	xmlhttp.onreadystatechange = function() {
 	        		if (xmlhttp.readyState == XMLHttpRequest.DONE) {
-	        	        	console.log("********* Zappi http status: " + xmlhttp.status)
-					console.log("********* Zappi headers received: " + xmlhttp.getAllResponseHeaders())
-					console.log("********* Zappi data received: " + xmlhttp.responseText)
+	        	        	//console.log("********* Zappi http status: " + xmlhttp.status)
+					//console.log("********* Zappi headers received: " + xmlhttp.getAllResponseHeaders())
+					//console.log("********* Zappi data received: " + xmlhttp.responseText)
 				}
 			}
 	        	xmlhttp.send()
@@ -120,7 +120,7 @@ App {
 	}
 
 	function collectZappiData() {
-		console.log("Zappi collecting data");
+		//console.log("Zappi collecting data");
 		if (settings["hubSerial"].length > 0) {
 			var serialLastDigit = settings["hubSerial"].substr(settings["hubSerial"].length - 1)
 	        	var xmlhttp = new XMLHttpRequest();
@@ -128,9 +128,9 @@ App {
 			xmlhttp.setRequestHeader("Authorization","Digest realm=\"MyEnergi Telemetry\"");
 	        	xmlhttp.onreadystatechange = function() {
 	        		if (xmlhttp.readyState == XMLHttpRequest.DONE) {
-	        	        	console.log("********* Zappi http status: " + xmlhttp.status)
-					console.log("********* Zappi headers received: " + xmlhttp.getAllResponseHeaders())
-					console.log("********* Zappi data received: " + xmlhttp.responseText)
+	        	        	//console.log("********* Zappi http status: " + xmlhttp.status)
+					//console.log("********* Zappi headers received: " + xmlhttp.getAllResponseHeaders())
+					//console.log("********* Zappi data received: " + xmlhttp.responseText)
 					if (xmlhttp.status !== 200) {
 						collectData.interval = collectData.interval * 2  //this will slowly increase to make sure we don't flood the server with bad logins
 						if (collectData.interval > 3600000) { collectData.interval = 3600000 } //max at 1 hour interval
@@ -149,25 +149,25 @@ App {
 							zappiDeviceFases = 1
 							if ( jsonResult[zappiIndex].zappi[zappiDevices-1].ectt3 !== undefined) {
 								zappiDeviceFases = 3
-								console.log("This Zappi has 3 fases!")
+								//console.log("This Zappi has 3 fases!")
 							}
 							zappiCharging = 0
 							if ( jsonResult[zappiIndex].zappi[zappiDevices-1].div !== undefined) {
 								zappiCharging = jsonResult[zappiIndex].zappi[zappiDevices-1].div
 							}
-							console.log("Zappi charging: " + zappiCharging)
+							//console.log("Zappi charging: " + zappiCharging)
 							zappiSerial = jsonResult[zappiIndex].zappi[zappiDevices-1].sno
-							console.log("Zappi serial: " + zappiSerial)
+							//console.log("Zappi serial: " + zappiSerial)
 							zappiGridImport = jsonResult[zappiIndex].zappi[zappiDevices-1].grd
-							console.log("Zappi grid import: " + zappiGridImport)
+							//console.log("Zappi grid import: " + zappiGridImport)
  							zappiMode = jsonResult[zappiIndex].zappi[zappiDevices-1].zmo
-							console.log("Zappi mode: " + zappiMode)
+							//console.log("Zappi mode: " + zappiMode)
 							zappiStatus = jsonResult[zappiIndex].zappi[zappiDevices-1].sta 
-							console.log("Zappi status: " + zappiStatus)
+							//console.log("Zappi status: " + zappiStatus)
 							zappiChargedkWh = jsonResult[zappiIndex].zappi[zappiDevices-1].che
-							console.log("Zappi charged kwh: " + zappiChargedkWh)
+							//console.log("Zappi charged kwh: " + zappiChargedkWh)
 							zappiMinGreenLevel = jsonResult[zappiIndex].zappi[zappiDevices-1].mgl
-  							console.log("Zappi min green level: " + zappiMinGreenLevel)
+  							//console.log("Zappi min green level: " + zappiMinGreenLevel)
 							//test zappiCharging = Math.round((Math.random() * 8000)) //test
 							//test zappiChargedkWh = 15 //test
 						}
