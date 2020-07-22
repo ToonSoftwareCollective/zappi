@@ -28,7 +28,7 @@ App {
 	property int zappiMode
 	property variant zappiModeText: ["Unknown", "Fast","Eco","Eco+"]
 	property int zappiStatus
-	property variant zappiStatusText: ["Unknown", "Paused","Charging","Completed"]
+	property variant zappiStatusText: ["Unknown(0)", "Paused","Unknown(2)","Charging","Unknown(3)","Completed"]
 	property int zappiChargedkWh
 	property int zappiMinGreenLevel
 	property bool zappiValidLogin: false
