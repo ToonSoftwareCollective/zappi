@@ -63,9 +63,18 @@ Tile {
 
         Image {
                 id: zappiIcon
+		visible: app.zappiStatus !== 5
 		scale: isNxt ? 0.3 : 0.2
                 anchors.centerIn: parent
                 source: "qrc:/tsc/car-charge-"+(p.currentFrame+1) + (dimState ? "-dim" : "" ) + ".svg"
+        }
+
+        Image {
+                id: zappiIconOk
+		visible: app.zappiStatus === 5
+		scale: isNxt ? 0.3 : 0.2
+                anchors.centerIn: parent
+                source: "qrc:/tsc/car-charge-ok" + (dimState ? "-dim" : "" ) + ".svg"
         }
 
         Text {
@@ -101,7 +110,7 @@ Tile {
         Text {
                 id: txtChargedkWh
                 text: app.zappiChargedkWh + "kWh"
-		visible: animationTimer.running 
+		visible: animationTimer.running || app.zappiStatus === 5
                	color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor 
                 anchors {
                         bottom: parent.bottom 
