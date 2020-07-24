@@ -29,6 +29,14 @@ App {
 	property variant zappiModeText: ["Unknown", "Fast","Eco","Eco+"]
 	property int zappiStatus
 	property variant zappiStatusText: ["Unknown(0)", "Paused","Unknown(2)","Charging","Unknown(3)","Completed"]
+	property string zappiState
+	property variant zappiStateText: { 
+		"A" : "Disconnected", 
+		"B1" : "Waiting for surplus", 
+		"B2" : "Charging delayed",
+		"C1" : "unknown", 
+		"C2" : "Charge complete", 
+	}
 	property int zappiChargedkWh
 	property int zappiMinGreenLevel
 	property bool zappiValidLogin: false
@@ -163,9 +171,11 @@ App {
  							zappiMode = jsonResult[zappiIndex].zappi[zappiDevices-1].zmo
 							//console.log("Zappi mode: " + zappiMode)
 							zappiStatus = jsonResult[zappiIndex].zappi[zappiDevices-1].sta 
-							//console.log("Zappi status: " + zappiStatus)
+							console.log("Zappi status: " + zappiStatus)
+							zappiState = jsonResult[zappiIndex].zappi[zappiDevices-1].pst
+							//console.log("Zappi state: " + zappiState)
 							zappiChargedkWh = jsonResult[zappiIndex].zappi[zappiDevices-1].che
-							//console.log("Zappi charged kwh: " + zappiChargedkWh)
+							console.log("Zappi charged kwh: " + zappiChargedkWh)
 							zappiMinGreenLevel = jsonResult[zappiIndex].zappi[zappiDevices-1].mgl
   							//console.log("Zappi min green level: " + zappiMinGreenLevel)
 							//test zappiCharging = Math.round((Math.random() * 8000)) //test

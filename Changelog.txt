@@ -1,5 +1,6 @@
 1.2.0
 -add completed icon tile
+-add state information like surplus and delayed
 
 1.1.0
 -add charge Watt and charged kWh to tile info during charging

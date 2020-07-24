@@ -240,11 +240,25 @@ Item {
         }
 
         Text {
+                id: txtZappiState
+                text: "State: " + app.zappiStateText[app.zappiState]
+                color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor
+                anchors {
+                        top: txtZappiStatus.bottom
+                        topMargin: 0
+                        horizontalCenter: parent.horizontalCenter
+                }
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: isNxt ? 30 : 20 
+                font.family: qfont.regular.name
+        }
+
+        Text {
                 id: txtZappiChargekWh
                 text: "Charged: " + app.zappiChargedkWh + " kWh"
                 color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor
                 anchors {
-                        top: txtZappiStatus.bottom
+                        top: txtZappiState.bottom
                         topMargin: 0
                         horizontalCenter: parent.horizontalCenter
                 }
