@@ -33,9 +33,12 @@ App {
 	property variant zappiStateText: { 
 		"A" : "Disconnected", 
 		"B1" : "Waiting for surplus", 
-		"B2" : "Charging delayed",
-		"C1" : "unknown", 
-		"C2" : "Charge complete", 
+		"B2" : "Ready to charge",
+		"C1" : "Stopping charge", 
+		"C2" : "Charging active", 
+		"D" : "Request ventilation", 
+		"D1" : "Stopping charge - ventilation", 
+		"D2" : "Charging active - ventilation", 
 	}
 	property int zappiChargedkWh
 	property int zappiMinGreenLevel
