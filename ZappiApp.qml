@@ -151,6 +151,7 @@ App {
 					// we have a valid login, set a faster timer if not already set 
 					zappiValidLogin = true
 					collectData.interval = 60000 //collect once a minute
+					writeZappiDataToFile(xmlhttp.responseText)
 					var jsonResult = JSON.parse(xmlhttp.responseText)
 					for (var i = 0;i < jsonResult.length; i++) {
 						//look for the zappi devices first
@@ -174,11 +175,11 @@ App {
  							zappiMode = jsonResult[zappiIndex].zappi[zappiDevices-1].zmo
 							//console.log("Zappi mode: " + zappiMode)
 							zappiStatus = jsonResult[zappiIndex].zappi[zappiDevices-1].sta 
-							console.log("Zappi status: " + zappiStatus)
+							//console.log("Zappi status: " + zappiStatus)
 							zappiState = jsonResult[zappiIndex].zappi[zappiDevices-1].pst
 							//console.log("Zappi state: " + zappiState)
 							zappiChargedkWh = jsonResult[zappiIndex].zappi[zappiDevices-1].che
-							console.log("Zappi charged kwh: " + zappiChargedkWh)
+							//console.log("Zappi charged kwh: " + zappiChargedkWh)
 							zappiMinGreenLevel = jsonResult[zappiIndex].zappi[zappiDevices-1].mgl
   							//console.log("Zappi min green level: " + zappiMinGreenLevel)
 							//test zappiCharging = Math.round((Math.random() * 8000)) //test
@@ -189,6 +190,12 @@ App {
 			}
 	        	xmlhttp.send();
 		}
+	}
+
+	function writeZappiDataToFile(data) {
+		var saveFile = new XMLHttpRequest();
+                saveFile.open("PUT", "file:///qmf/www/tsc/zappi.json");
+                saveFile.send(data);
 	}
 
 
