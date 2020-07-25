@@ -14,8 +14,8 @@ Tile {
 
 		function update() {
 			if ( (isNaN(app.zappiCharging)) || (app.zappiCharging === 0) ) {
-				animationTimer.stop()
-				p.currentFrame = -1
+				animationTimer.stop() 
+				p.currentFrame = -1 //disconnected icon is frame 0
 			} else {
 				animationTimer.interval = 100 
 				if (app.zappiCharging < 6000) {
@@ -62,8 +62,8 @@ Tile {
 	}
 
         Image {
-                id: zappiIcon
-		visible: app.zappiStatus !== 5
+                id: zappiIconCharging
+		visible: app.zappiStatus !== 5 && app.zappiState != "B1" && app.zappiState != "B2"
 		scale: isNxt ? 0.3 : 0.2
                 anchors.centerIn: parent
                 source: "qrc:/tsc/car-charge-"+(p.currentFrame+1) + (dimState ? "-dim" : "" ) + ".svg"
@@ -75,6 +75,14 @@ Tile {
 		scale: isNxt ? 0.3 : 0.2
                 anchors.centerIn: parent
                 source: "qrc:/tsc/car-charge-ok" + (dimState ? "-dim" : "" ) + ".svg"
+        }
+
+        Image {
+                id: zappiIconPause
+		visible: app.zappiStatus !== 5 && (app.zappiState == "B1" || app.zappiState == "B2")
+		scale: isNxt ? 0.3 : 0.2
+                anchors.centerIn: parent
+                source: "qrc:/tsc/car-charge-pause" + (dimState ? "-dim" : "" ) + ".svg"
         }
 
         Text {
@@ -94,7 +102,7 @@ Tile {
         Text {
                 id: txtCharging
                 text: Math.round(app.zappiCharging / 100) / 10 + "kW"
-		visible: animationTimer.running 
+		visible: animationTimer.running
                	color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor 
                 anchors {
                         bottom: parent.bottom 
@@ -110,7 +118,7 @@ Tile {
         Text {
                 id: txtChargedkWh
                 text: app.zappiChargedkWh + "kWh"
-		visible: animationTimer.running || app.zappiStatus === 5
+		visible: animationTimer.running || app.zappiStatus === 5 || app.zappiState == "B1" || app.zappiState == "B2"
                	color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor 
                 anchors {
                         bottom: parent.bottom 
