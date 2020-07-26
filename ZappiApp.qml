@@ -26,13 +26,13 @@ App {
 	property int zappiGridImport
 	property int zappiCharging
 	property int zappiMode
-	property variant zappiModeText: ["Unknown", "Fast","Eco","Eco+"]
+	property variant zappiModeText: ["Unknown", "Fast","Eco","Eco+","Stop"]
 	property int zappiStatus
 	property variant zappiStatusText: ["Unknown(0)", "Paused","Unknown(2)","Charging","Unknown(3)","Completed"]
 	property string zappiState
 	property variant zappiStateText: { 
 		"A" : "Disconnected", 
-		"B1" : "Waiting for surplus", 
+		"B1" : "Not charging", 
 		"B2" : "Ready to charge",
 		"C1" : "Stopping charge", 
 		"C2" : "Charging active", 
@@ -150,7 +150,7 @@ App {
 					}
 					// we have a valid login, set a faster timer if not already set 
 					zappiValidLogin = true
-					collectData.interval = 60000 //collect once a minute
+					collectData.interval = 30000 //collect every 30 sec
 					writeZappiDataToFile(xmlhttp.responseText)
 					var jsonResult = JSON.parse(xmlhttp.responseText)
 					for (var i = 0;i < jsonResult.length; i++) {
@@ -174,6 +174,15 @@ App {
 							//console.log("Zappi grid import: " + zappiGridImport)
  							zappiMode = jsonResult[zappiIndex].zappi[zappiDevices-1].zmo
 							//console.log("Zappi mode: " + zappiMode)
+
+							//stupid hack for now
+							var tmpZappiStateText = zappiStateText
+							tmpZappiStateText["B1"] = "Not charging"
+							if (zappiMode === 3) {
+								tmpZappiStateText["B1"] = "Waiting for surplus"
+							}
+							zappiStateText = tmpZappiStateText
+
 							zappiStatus = jsonResult[zappiIndex].zappi[zappiDevices-1].sta 
 							//console.log("Zappi status: " + zappiStatus)
 							zappiState = jsonResult[zappiIndex].zappi[zappiDevices-1].pst

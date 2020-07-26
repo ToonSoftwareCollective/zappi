@@ -75,13 +75,13 @@ Screen {
 		primary: app.zappiMode === 2 ? true : false
 		anchors.top : zappiModeTitle.bottom
 		anchors.topMargin : 10 
-		anchors.horizontalCenter: mainRectangle.horizontalCenter
+		anchors.right: mainRectangle.horizontalCenter
 		onClicked: {
 			app.changeZappiMode(2)
 		}
 	}
 	StandardButton {
-		id: zappiModeFase
+		id: zappiModeFast
 		width: 150
 		text: "Fast"
 		primary: app.zappiMode === 1 ? true : false
@@ -104,6 +104,20 @@ Screen {
 		anchors.leftMargin : 10 
 		onClicked: {
 			app.changeZappiMode(3)
+		}
+	}
+
+	StandardButton {
+		id: zappiModeStop
+ 		width: 150
+		text: "Stop"
+		primary: app.zappiMode === 4 ? true : false
+		anchors.top : zappiModeTitle.bottom
+		anchors.topMargin : 10 
+		anchors.left : zappiModeEcoPlus.right
+		anchors.leftMargin : 10 
+		onClicked: {
+			app.changeZappiMode(4)
 		}
 	}
 
