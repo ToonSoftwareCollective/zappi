@@ -13,7 +13,7 @@ Tile {
 		property int currentFrame: -1 
 
 		function update() {
-			if ( (isNaN(app.zappiCharging)) || (app.zappiCharging === 0) ) {
+			if ( (isNaN(app.zappiCharging)) ||  (app.zappiCharging === 0) ) {
 				animationTimer.stop() 
 				p.currentFrame = -1 //disconnected icon is frame 0
 			} else {

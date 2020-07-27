@@ -163,9 +163,11 @@ App {
 								zappiDeviceFases = 3
 								//console.log("This Zappi has 3 fases!")
 							}
-							zappiCharging = 0
 							if ( jsonResult[zappiIndex].zappi[zappiDevices-1].div !== undefined) {
 								zappiCharging = jsonResult[zappiIndex].zappi[zappiDevices-1].div
+							}
+							else {
+								zappiCharging = 0
 							}
 							//console.log("Zappi charging: " + zappiCharging)
 							zappiSerial = jsonResult[zappiIndex].zappi[zappiDevices-1].sno
