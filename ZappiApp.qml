@@ -28,7 +28,7 @@ App {
 	property int zappiMode
 	property variant zappiModeText: ["Unknown", "Fast","Eco","Eco+","Stop"]
 	property int zappiStatus
-	property variant zappiStatusText: ["Unknown(0)", "Paused","Unknown(2)","Charging","Unknown(3)","Completed"]
+	property variant zappiStatusText: ["Starting", "Paused","DSR","Charging","Boosting","Completed"]
 	property string zappiState
 	property variant zappiStateText: { 
 		"A" : "Disconnected", 
@@ -39,6 +39,7 @@ App {
 		"D" : "Request ventilation", 
 		"D1" : "Stopping charge - ventilation", 
 		"D2" : "Charging active - ventilation", 
+		"F" : "Fault/Restart",
 	}
 	property int zappiChargedkWh
 	property int zappiMinGreenLevel
@@ -146,6 +147,9 @@ App {
 						collectData.interval = collectData.interval * 2  //this will slowly increase to make sure we don't flood the server with bad logins
 						if (collectData.interval > 3600000) { collectData.interval = 3600000 } //max at 1 hour interval
 						zappiValidLogin = false
+	        	        		console.log("********* Zappi http status: " + xmlhttp.status)
+						console.log("********* Zappi headers received: " + xmlhttp.getAllResponseHeaders())
+						console.log("********* Zappi data received: " + xmlhttp.responseText)
 						return
 					}
 					// we have a valid login, set a faster timer if not already set 
