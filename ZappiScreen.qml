@@ -30,6 +30,20 @@ Screen {
 			}
 		}
 	}
+	StandardButton {
+		id: btnInfoScreen
+		width: 150
+		text: "Info"
+		anchors.top: mainRectangle.top
+		anchors.left: mainRectangle.left
+		anchors.leftMargin: 10
+		anchors.topMargin: 10
+		onClicked: {
+			if (app.zappiInfo) {
+				app.zappiInfo.show();
+			}
+		}
+	}
 	Text {
 		id: zappiBadLogin
 		visible: !app.zappiValidLogin
@@ -111,7 +125,7 @@ Screen {
 		}
 	}
 	Text {
-		id: sliderTitle
+		id: sliderMglTitle
 		anchors {
 			top: zappiModeEco.bottom
 			topMargin: 10
@@ -125,20 +139,20 @@ Screen {
 		text: "Minimal green level"
 	}
 	Item {
-		id: slider;width: 400;height: 30
+		id: sliderMgl;width: 400;height: 30
 		anchors {
-			top: sliderTitle.bottom
+			top: sliderMglTitle.bottom
 			topMargin: 10
 			horizontalCenter: parent.horizontalCenter
 		}
 		// value is read/write.
 		property real value: app.zappiMinGreenLevel
 		onValueChanged: {
-			handle.x = 2 + (value - minimum) * slider.xMax / (maximum - minimum);
+			handleMgl.x = 2 + (value - minimum) * sliderMgl.xMax / (maximum - minimum);
 		}
 		property real maximum: 100
 		property real minimum: 1
-		property int xMax: slider.width - handle.width - 4
+		property int xMax: sliderMgl.width - handleMgl.width - 4
 		Rectangle {
 			anchors.fill: parent
 			border.color: "white";
@@ -156,14 +170,14 @@ Screen {
 		MouseArea {
 			anchors.fill: parent
 			onClicked: {
-				var pos = Math.round(mouse.x / slider.width * (slider.maximum - slider.minimum) + slider.minimum)
-				slider.value = pos
-				app.changeZappiMinGreenLevelDelayed(slider.value)
+				var pos = Math.round(mouse.x / sliderMgl.width * (sliderMgl.maximum - sliderMgl.minimum) + sliderMgl.minimum)
+				sliderMgl.value = pos
+				app.changeZappiMinGreenLevelDelayed(sliderMgl.value)
 			}
 		}
 		Rectangle {
-			id: handle;smooth: true
-			x: slider.width / 2 - handle.width / 2;y: 2;width: 50;height: slider.height - 4;radius: 6
+			id: handleMgl;smooth: true
+			x: sliderMgl.width / 2 - handleMgl.width / 2;y: 2;width: 50;height: sliderMgl.height - 4;radius: 6
 			gradient: Gradient {
 				GradientStop {
 					position: 0.0;color: "lightgreen"
@@ -173,8 +187,8 @@ Screen {
 				}
 			}
 			Text {
-				id: sliderText
-				text: slider.value
+				id: sliderMglText
+				text: sliderMgl.value
 				font.pixelSize: 20
 				anchors.horizontalCenter: parent.horizontalCenter
 				anchors.verticalCenter: parent.verticalCenter
@@ -186,89 +200,275 @@ Screen {
 				drag.target: parent
 				drag.axis: Drag.XAxis;
 				drag.minimumX: 2;
-				drag.maximumX: slider.xMax + 2
+				drag.maximumX: sliderMgl.xMax + 2
 				onPositionChanged: {
-					slider.value = Math.round((slider.maximum - slider.minimum) * (handle.x - 2) / slider.xMax + slider.minimum);app.changeZappiMinGreenLevelDelayed(slider.value)
+					sliderMgl.value = Math.round((sliderMgl.maximum - sliderMgl.minimum) * (handleMgl.x - 2) / sliderMgl.xMax + sliderMgl.minimum)
+					app.changeZappiMinGreenLevelDelayed(sliderMgl.value)
 				}
 			}
 		}
 	}
 	Text {
-		id: txtZappiGridImport
-		text: "Grid: " + app.zappiGridImport + " Watt"
-		color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor
+		id: sliderBoostTitle
 		anchors {
-			top: slider.bottom
+			top: sliderMgl.bottom
+			topMargin: 10
+			horizontalCenter: mainRectangle.horizontalCenter
+		}
+		font {
+			family: qfont.regular.name
+			pixelSize: qfont.tileTitle
+		}
+		color: colors.tileTitleColor
+		text: "Boost kWh"
+	}
+	Item {
+		id: sliderBoost;width: 400;height: 30
+		visible: (app.zappiState !== 1 && (app.zappiMode === 2 || app.zappiMode === 3)) //only allow boost when connected and in eco or eco+ mode
+		anchors {
+			top: sliderBoostTitle.bottom
 			topMargin: 10
 			horizontalCenter: parent.horizontalCenter
 		}
-		horizontalAlignment: Text.AlignHCenter
-		font.pixelSize: isNxt ? 30 : 20
-		font.family: qfont.regular.name
+		// value is read/write.
+		property real value: app.zappiBoostkWh
+		onValueChanged: {
+			handleBoost.x = 2 + (value - minimum) * sliderBoost.xMax / (maximum - minimum);
+		}
+		property real maximum: 100
+		property real minimum: 1
+		property int xMax: sliderBoost.width - handleBoost.width - 4
+		Rectangle {
+			anchors.fill: parent
+			border.color: "white";
+			border.width: 0;
+			radius: 8
+			gradient: Gradient {
+				GradientStop {
+					position: 0.0;color: "#66343434"
+				}
+				GradientStop {
+					position: 1.0;color: "#66000000"
+				}
+			}
+		}
+		MouseArea {
+			anchors.fill: parent
+			onClicked: {
+				var pos = Math.round(mouse.x / sliderBoost.width * (sliderBoost.maximum - sliderBoost.minimum) + sliderBoost.minimum)
+				sliderBoost.value = pos
+				//app.changeZappiMinGreenLevelDelayed(sliderBoost.value)
+			}
+		}
+		Rectangle {
+			id: handleBoost;smooth: true
+			x: sliderBoost.width / 2 - handleBoost.width / 2;y: 2;width: 50;height: sliderBoost.height - 4;radius: 6
+			gradient: Gradient {
+				GradientStop {
+					position: 0.0;color: "lightgreen"
+				}
+				GradientStop {
+					position: 1.0;color: "green"
+				}
+			}
+			Text {
+				id: sliderBoostText
+				text: sliderBoost.value
+				font.pixelSize: 20
+				anchors.horizontalCenter: parent.horizontalCenter
+				anchors.verticalCenter: parent.verticalCenter
+				font.family: qfont.regular.name
+				color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor
+			}
+			MouseArea {
+				anchors.fill: parent;
+				drag.target: parent
+				drag.axis: Drag.XAxis;
+				drag.minimumX: 2;
+				drag.maximumX: sliderBoost.xMax + 2
+				onPositionChanged: {
+					sliderBoost.value = Math.round((sliderBoost.maximum - sliderBoost.minimum) * (handleBoost.x - 2) / sliderBoost.xMax + sliderBoost.minimum)
+					//app.changeZappiMinGreenLevelDelayed(slider.value)
+				}
+			}
+		}
 	}
+        StandardButton {
+                id: zappiBoostNow
+                width: 250
+		visible: (app.zappiState !== 1 && (app.zappiMode === 2 || app.zappiMode === 3)) //only allow boost when connected and in eco or eco+ mode
+                text: app.zappiBoostMode ? "Boosting" : "Boost now"
+                primary: app.zappiBoostMode
+                anchors.verticalCenter: sliderBoost.verticalCenter
+                anchors.right: sliderBoost.left 
+                anchors.rightMargin: 10 
+                onClicked: {
+                        //app.changeZappiMode(2)
+                }
+        }
 	Text {
-		id: txtZappiCharging
-		text: "Charging: " + app.zappiCharging + " Watt"
-		color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor
+		id: sliderSmartBoostTitle
 		anchors {
-			top: txtZappiGridImport.bottom
-			topMargin: 0
+			top: sliderBoost.bottom
+			topMargin: 10
+			horizontalCenter: mainRectangle.horizontalCenter
+		}
+		font {
+			family: qfont.regular.name
+			pixelSize: qfont.tileTitle
+		}
+		color: colors.tileTitleColor
+		text: "Smart Boost kWh"
+	}
+	Item {
+		id: sliderSmartBoost;width: 400;height: 30
+		visible: (app.zappiState !== 1 && (app.zappiMode === 2 || app.zappiMode === 3)) //only allow boost when connected and in eco or eco+ mode
+		anchors {
+			top: sliderSmartBoostTitle.bottom
+			topMargin: 10
 			horizontalCenter: parent.horizontalCenter
 		}
-		horizontalAlignment: Text.AlignHCenter
-		font.pixelSize: isNxt ? 30 : 20
-		font.family: qfont.regular.name
-	}
-	Text {
-		id: txtZappiMode
-		text: "Mode: " + app.zappiModeText[app.zappiMode]
-		color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor
-		anchors {
-			top: txtZappiCharging.bottom
-			topMargin: 0
-			horizontalCenter: parent.horizontalCenter
+		// value is read/write.
+		property real value: app.zappiSmartBoostkWh
+		onValueChanged: {
+			handleSmartBoost.x = 2 + (value - minimum) * sliderSmartBoost.xMax / (maximum - minimum);
 		}
-		horizontalAlignment: Text.AlignHCenter
-		font.pixelSize: isNxt ? 30 : 20
-		font.family: qfont.regular.name
-	}
-	Text {
-		id: txtZappiStatus
-		text: "Status: " + app.zappiStatusText[app.zappiStatus]
-		color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor
-		anchors {
-			top: txtZappiMode.bottom
-			topMargin: 0
-			horizontalCenter: parent.horizontalCenter
+		property real maximum: 100
+		property real minimum: 1
+		property int xMax: sliderSmartBoost.width - handleSmartBoost.width - 4
+		Rectangle {
+			anchors.fill: parent
+			border.color: "white";
+			border.width: 0;
+			radius: 8
+			gradient: Gradient {
+				GradientStop {
+					position: 0.0;color: "#66343434"
+				}
+				GradientStop {
+					position: 1.0;color: "#66000000"
+				}
+			}
 		}
-		horizontalAlignment: Text.AlignHCenter
-		font.pixelSize: isNxt ? 30 : 20
-		font.family: qfont.regular.name
-	}
-	Text {
-		id: txtZappiState
-		text: "State: " + app.zappiStateText[app.zappiState]
-		color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor
-		anchors {
-			top: txtZappiStatus.bottom
-			topMargin: 0
-			horizontalCenter: parent.horizontalCenter
+		MouseArea {
+			anchors.fill: parent
+			onClicked: {
+				var pos = Math.round(mouse.x / sliderSmartBoost.width * (sliderSmartBoost.maximum - sliderSmartBoost.minimum) + sliderSmartBoost.minimum)
+				sliderSmartBoost.value = pos
+				//app.changeZappiMinGreenLevelDelayed(sliderSmartBoost.value)
+			}
 		}
-		horizontalAlignment: Text.AlignHCenter
-		font.pixelSize: isNxt ? 30 : 20
-		font.family: qfont.regular.name
-	}
-	Text {
-		id: txtZappiChargekWh
-		text: "Charged: " + app.zappiChargedkWh + " kWh"
-		color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor
-		anchors {
-			top: txtZappiState.bottom
-			topMargin: 0
-			horizontalCenter: parent.horizontalCenter
+		Rectangle {
+			id: handleSmartBoost;smooth: true
+			x: sliderSmartBoost.width / 2 - handleSmartBoost.width / 2;y: 2;width: 50;height: sliderSmartBoost.height - 4;radius: 6
+			gradient: Gradient {
+				GradientStop {
+					position: 0.0;color: "lightgreen"
+				}
+				GradientStop {
+					position: 1.0;color: "green"
+				}
+			}
+			Text {
+				id: sliderSmartBoostText
+				text: sliderSmartBoost.value
+				font.pixelSize: 20
+				anchors.horizontalCenter: parent.horizontalCenter
+				anchors.verticalCenter: parent.verticalCenter
+				font.family: qfont.regular.name
+				color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor
+			}
+			MouseArea {
+				anchors.fill: parent;
+				drag.target: parent
+				drag.axis: Drag.XAxis;
+				drag.minimumX: 2;
+				drag.maximumX: sliderSmartBoost.xMax + 2
+				onPositionChanged: {
+					sliderSmartBoost.value = Math.round((sliderSmartBoost.maximum - sliderSmartBoost.minimum) * (handleSmartBoost.x - 2) / sliderSmartBoost.xMax + sliderSmartBoost.minimum)
+					//app.changeZappiMinGreenLevelDelayed(slider.value)
+				}
+			}
 		}
-		horizontalAlignment: Text.AlignHCenter
-		font.pixelSize: isNxt ? 30 : 20
-		font.family: qfont.regular.name
 	}
+        StandardButton {
+                id: zappiSmartBoostNow
+                width: 250
+		visible: (app.zappiState !== 1 && (app.zappiMode === 2 || app.zappiMode === 3)) //only allow boost when connected and in eco or eco+ mode
+                text: app.zappiSmartBoostMode ? "Smart boosting" : "Smart boost now"
+                primary: app.zappiSmartBoostMode
+                anchors.verticalCenter: sliderSmartBoost.verticalCenter
+                anchors.right: sliderSmartBoost.left 
+                anchors.rightMargin: 10 
+                onClicked: {
+                        //app.changeZappiMode(2)
+                }
+        }
+        NumberSpinner {
+                id: nsHour
+                anchors {
+			verticalCenter : sliderSmartBoost.verticalCenter
+                        left: sliderSmartBoost.right
+                        leftMargin: 10 
+                }
+                rangeMin: 0
+                rangeMax: 23
+                increment: 1
+                value: 0
+                wrapAtMaximum: true
+                wrapAtMinimum: true
+		implicitWidth: Math.round(90 * horizontalScaling)
+		implicitHeight: Math.round(40 * verticalScaling)
+		buttonWidth: Math.round(25 * horizontalScaling)
+                function valueToText(value) { return value < 10 ? "0" + value : value; }
+
+                //onValueChanged: p.timeChanged();
+        }
+        NumberSpinner {
+                id: nsMinute
+		anchors {
+			verticalCenter : sliderSmartBoost.verticalCenter
+                        left: nsHour.right
+                        leftMargin: 10 
+                }
+                rangeMin: 0
+                rangeMax: 45
+                increment: 15
+                value: 0
+                wrapAtMaximum: true
+                wrapAtMinimum: true
+		implicitWidth: Math.round(90 * horizontalScaling)
+		implicitHeight: Math.round(40 * verticalScaling)
+		buttonWidth: Math.round(25 * horizontalScaling)
+                function valueToText(value) { return value < 10 ? "0" + value : value; }
+
+                //onValueChanged: p.timeChanged();
+        }
+        Text {
+                id: colon
+                anchors {
+                        left: nsHour.right
+                        right: nsMinute.left
+                        verticalCenter: nsHour.verticalCenter
+                }
+                horizontalAlignment: Text.AlignHCenter
+                text: ":"
+
+                font.family: qfont.regular.name
+                font.pixelSize: qfont.spinnerText
+                color: colors.numberSpinnerNumber
+        }
+        Text {
+                id: smartBoostTimeText 
+                anchors {
+                        verticalCenter: sliderSmartBoostTitle.verticalCenter 
+                        horizontalCenter: colon.horizontalCenter
+                }
+                font {
+                        family: qfont.regular.name
+                        pixelSize: qfont.tileTitle
+                }
+                color: colors.tileTitleColor
+                text: "Smart boost ready before"
+        }
 }

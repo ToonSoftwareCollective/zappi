@@ -10,8 +10,10 @@ App {
 	property url tileUrl: "ZappiTile.qml";
 	property url thumbnailIcon: "qrc:/tsc/zappiicon.png"
 	property url zappiScreenUrl: "ZappiScreen.qml"
+	property url zappiInfoUrl: "ZappiInfo.qml"
 	property url zappiSettingsUrl: "ZappiSettings.qml"
 	property ZappiSettings zappiSettings
+	property ZappiInfo zappiInfo
 	property variant settings: {
 		"hubSerial": "",
 		"hubPassword": "",
@@ -40,9 +42,16 @@ App {
 	}
 	property int zappiChargedkWh
 	property int zappiMinGreenLevel
+	property int zappiBoostkWh: 5
+	property bool zappiBoostMode: false
+	property int zappiSmartBoostkWh: 5
+	property bool zappiSmartBoostMode: false
+	property int zappiSmartBoostHour
+	property int zappiSmartBoostMinute
 	property bool zappiValidLogin: false
 	function init() {
 		registry.registerWidget("screen", zappiScreenUrl, this);
+		registry.registerWidget("screen", zappiInfoUrl, this, "zappiInfo");
 		registry.registerWidget("screen", zappiSettingsUrl, this, "zappiSettings");
 		registry.registerWidget("tile", tileUrl, this, null, {
 			thumbLabel: "Zappi",
@@ -172,7 +181,7 @@ App {
 							zappiDeviceFases = 1
 							if (jsonResult[zappiIndex].zappi[zappiDevices - 1].ectt3 !== undefined) {
 								zappiDeviceFases = 3
-									//console.log("This Zappi has 3 fases!")
+								//console.log("This Zappi has 3 fases!")
 							}
 							if (jsonResult[zappiIndex].zappi[zappiDevices - 1].div !== undefined) {
 								zappiCharging = jsonResult[zappiIndex].zappi[zappiDevices - 1].div
@@ -181,12 +190,12 @@ App {
 							}
 							//console.log("Zappi charging: " + zappiCharging)
 							zappiSerial = jsonResult[zappiIndex].zappi[zappiDevices - 1].sno
-								//console.log("Zappi serial: " + zappiSerial)
+							//console.log("Zappi serial: " + zappiSerial)
 							zappiGridImport = jsonResult[zappiIndex].zappi[zappiDevices - 1].grd
-								//console.log("Zappi grid import: " + zappiGridImport)
+							//console.log("Zappi grid import: " + zappiGridImport)
 							zappiMode = jsonResult[zappiIndex].zappi[zappiDevices - 1].zmo
-								//console.log("Zappi mode: " + zappiMode)
-								//stupid hack for now
+							//console.log("Zappi mode: " + zappiMode)
+							//stupid hack for now
 							var tmpZappiStateText = zappiStateText
 							tmpZappiStateText["B1"] = "Not charging"
 							if (zappiMode === 3) {
@@ -194,15 +203,19 @@ App {
 							}
 							zappiStateText = tmpZappiStateText
 							zappiStatus = jsonResult[zappiIndex].zappi[zappiDevices - 1].sta
-								//console.log("Zappi status: " + zappiStatus)
+							//console.log("Zappi status: " + zappiStatus)
 							zappiState = jsonResult[zappiIndex].zappi[zappiDevices - 1].pst
-								//console.log("Zappi state: " + zappiState)
+							//console.log("Zappi state: " + zappiState)
 							zappiChargedkWh = jsonResult[zappiIndex].zappi[zappiDevices - 1].che
-								//console.log("Zappi charged kwh: " + zappiChargedkWh)
+							//console.log("Zappi charged kwh: " + zappiChargedkWh)
 							zappiMinGreenLevel = jsonResult[zappiIndex].zappi[zappiDevices - 1].mgl
-								//console.log("Zappi min green level: " + zappiMinGreenLevel)
-								//test zappiCharging = Math.round((Math.random() * 8000)) //test
-								//test zappiChargedkWh = 15 //test
+							//console.log("Zappi min green level: " + zappiMinGreenLevel)
+							zappiBoostMode = ( (jsonResult[zappiIndex].zappi[zappiDevices - 1].bsm !== undefined) && (jsonResult[zappiIndex].zappi[zappiDevices - 1].bsm === 1) ) ? true : false 
+							zappiBoostkWh = (jsonResult[zappiIndex].zappi[zappiDevices - 1].tbk !== undefined ) ? jsonResult[zappiIndex].zappi[zappiDevices - 1].tbk : 0
+							zappiSmartBoostMode = ( (jsonResult[zappiIndex].zappi[zappiDevices - 1].bss !== undefined) && (jsonResult[zappiIndex].zappi[zappiDevices - 1].bss === 1) ) ? true : false 
+							zappiSmartBoostkWh = (jsonResult[zappiIndex].zappi[zappiDevices - 1].sbk !== undefined ) ? jsonResult[zappiIndex].zappi[zappiDevices - 1].sbk : 0
+							zappiSmartBoostHour = (jsonResult[zappiIndex].zappi[zappiDevices - 1].sbh !== undefined ) ? jsonResult[zappiIndex].zappi[zappiDevices - 1].sbh : 0
+							zappiSmartBoostMinute = (jsonResult[zappiIndex].zappi[zappiDevices - 1].sbm !== undefined ) ? jsonResult[zappiIndex].zappi[zappiDevices - 1].sbm : 0
 						}
 					}
 				}
@@ -212,9 +225,9 @@ App {
 	}
 
 	function writeZappiDataToFile(data) {
-		var saveFile = new XMLHttpRequest();
-		saveFile.open("PUT", "file:///qmf/www/tsc/zappi.json");
-		saveFile.send(data);
+		var saveFile = new XMLHttpRequest()
+		saveFile.open("PUT", "file:///qmf/www/tsc/zappi.json")
+		saveFile.send(data)
 	}
 	Timer {
 		id: collectData
