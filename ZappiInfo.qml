@@ -43,11 +43,24 @@ Screen {
 		font.family: qfont.regular.name
 	}
 	Text {
+		id: txtZappiChargeFases
+		text: "Charging on fases: " + app.zappiChargeFases
+		color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor
+		anchors {
+			top: txtZappiCharging.bottom
+			topMargin: 0
+			horizontalCenter: parent.horizontalCenter
+		}
+		horizontalAlignment: Text.AlignHCenter
+		font.pixelSize: isNxt ? 30 : 20
+		font.family: qfont.regular.name
+	}
+	Text {
 		id: txtZappiMode
 		text: "Mode: " + app.zappiModeText[app.zappiMode]
 		color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor
 		anchors {
-			top: txtZappiCharging.bottom
+			top: txtZappiChargeFases.bottom
 			topMargin: 0
 			horizontalCenter: parent.horizontalCenter
 		}

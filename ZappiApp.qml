@@ -22,7 +22,8 @@ App {
 	property int zappiASNRedirects: 0
 	property int zappiIndex
 	property int zappiDevices
-	property int zappiDeviceFases
+	property int zappiDeviceFases: 1
+	property int zappiChargeFases: 1
 	property int zappiSerial
 	property int zappiGridImport
 	property int zappiCharging
@@ -152,9 +153,9 @@ App {
 			xmlhttp.open("GET", "https://" + zappiASN + "/cgi-jstatus-*", true, settings["hubSerial"], settings["hubPassword"])
 			xmlhttp.onreadystatechange = function() {
 				if (xmlhttp.readyState == XMLHttpRequest.DONE) {
-					console.log("********* Zappi http status: " + xmlhttp.status)
-					console.log("********* Zappi ASN header received: " + xmlhttp.getResponseHeader("x_myenergi-asn"))
-					console.log("********* Zappi data received: " + xmlhttp.responseText)
+					//console.log("********* Zappi http status: " + xmlhttp.status)
+					//console.log("********* Zappi ASN header received: " + xmlhttp.getResponseHeader("x_myenergi-asn"))
+					//console.log("********* Zappi data received: " + xmlhttp.responseText)
 					if ((xmlhttp.getResponseHeader("x_myenergi-asn") !== undefined) && (xmlhttp.getResponseHeader("x_myenergi-asn") !== "") ) {
 						var nowASN =  xmlhttp.getResponseHeader("x_myenergi-asn") 
 						if (zappiASN !== nowASN) {
@@ -194,10 +195,19 @@ App {
 						if (jsonResult[i].zappi !== undefined) {
 							zappiIndex = i
 							zappiDevices = jsonResult[zappiIndex].zappi.length //currently only one zappi is supported
-							zappiDeviceFases = 1
-							if (jsonResult[zappiIndex].zappi[zappiDevices - 1].ectt3 !== undefined) {
-								zappiDeviceFases = 3
+							if ((jsonResult[zappiIndex].zappi[zappiDevices - 1].pha !== undefined) && (jsonResult[zappiIndex].zappi[zappiDevices - 1].pha === 3)) {
 								//console.log("This Zappi has 3 fases!")
+								zappiDeviceFases = 3
+								if ((jsonResult[zappiIndex].zappi[zappiDevices - 1].ectp1 !== undefined) && (jsonResult[zappiIndex].zappi[zappiDevices - 1].ectp2 !== undefined) && (jsonResult[zappiIndex].zappi[zappiDevices - 1].ectp3 !== undefined)) {
+									if ((jsonResult[zappiIndex].zappi[zappiDevices - 1].ectp1 > 1000) && (jsonResult[zappiIndex].zappi[zappiDevices - 1].ectp2 > 1000) && (jsonResult[zappiIndex].zappi[zappiDevices - 1].ectp3 > 1000) ) {
+										//console.log("This Zappi has 3 fases, and charging on 3 fases!")
+										zappiChargeFases = 3
+									} else {
+										//console.log("This Zappi has 3 fases, but charging on 1 fase!")
+										zappiChargeFases = 1
+									}
+								
+								}
 							}
 							if (jsonResult[zappiIndex].zappi[zappiDevices - 1].div !== undefined) {
 								zappiCharging = jsonResult[zappiIndex].zappi[zappiDevices - 1].div

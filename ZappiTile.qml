@@ -14,13 +14,13 @@ Tile {
 				p.currentFrame = -1 //disconnected icon is frame 0
 			} else {
 				animationTimer.interval = 100
-				if (app.zappiCharging < 6000) {
+				if (app.zappiCharging/app.zappiChargeFases < 6000) {
 					animationTimer.interval = 200
 				}
-				if (app.zappiCharging < 4000) {
+				if (app.zappiCharging/app.zappiChargeFases < 4000) {
 					animationTimer.interval = 400
 				}
-				if (app.zappiCharging < 2000) {
+				if (app.zappiCharging/app.zappiChargeFases < 2000) {
 					animationTimer.interval = 800
 				}
 				animationTimer.restart();
