@@ -18,6 +18,8 @@ App {
 		"hubSerial": "",
 		"hubPassword": "",
 	}
+	property variant zappiASN: ""
+	property int zappiASNRedirects: 0
 	property int zappiIndex
 	property int zappiDevices
 	property int zappiDeviceFases
@@ -100,13 +102,11 @@ App {
 	function changeZappiMode(newZappiMode) {
 		// here a call to url to change zappi mode
 		zappiMode = newZappiMode
-		if (settings["hubSerial"].length > 0) {
-			var serialLastDigit = settings["hubSerial"].substr(settings["hubSerial"].length - 1)
-			var url = "https://s" + serialLastDigit + ".myenergi.net/cgi-zappi-mode-Z" + zappiSerial + "-" + zappiMode + "-0-0-0000"
-				//console.log("Zappi set mode url: " + url)
+		if (zappiASN !== "") {
+			var url = "https://" + zappiASN + "/cgi-set-min-green-Z" + zappiSerial + "-" + zappiMinGreenLevel
+			//console.log("Zappi set mode url: " + url)
 			var xmlhttp = new XMLHttpRequest()
 			xmlhttp.open("GET", url, true, settings["hubSerial"], settings["hubPassword"])
-			xmlhttp.setRequestHeader("Authorization", "Digest realm=\"MyEnergi Telemetry\"");
 			xmlhttp.onreadystatechange = function() {
 				if (xmlhttp.readyState == XMLHttpRequest.DONE) {
 					//console.log("********* Zappi http status: " + xmlhttp.status)
@@ -127,13 +127,11 @@ App {
 	function changeZappiMinGreenLevel(newZappiMinGreenLevel) {
 		// here a call to url to change zappi mgl
 		zappiMinGreenLevel = newZappiMinGreenLevel
-		if (settings["hubSerial"].length > 0) {
-			var serialLastDigit = settings["hubSerial"].substr(settings["hubSerial"].length - 1)
-			var url = "https://s" + serialLastDigit + ".myenergi.net/cgi-set-min-green-Z" + zappiSerial + "-" + zappiMinGreenLevel
-				//console.log("Zappi set mode url: " + url)
+		if (zappiASN !== "") {
+			var url = "https://" + zappiASN + "/cgi-set-min-green-Z" + zappiSerial + "-" + zappiMinGreenLevel
+			//console.log("Zappi set mode url: " + url)
 			var xmlhttp = new XMLHttpRequest()
 			xmlhttp.open("GET", url, true, settings["hubSerial"], settings["hubPassword"])
-			xmlhttp.setRequestHeader("Authorization", "Digest realm=\"MyEnergi Telemetry\"");
 			xmlhttp.onreadystatechange = function() {
 				if (xmlhttp.readyState == XMLHttpRequest.DONE) {
 					//console.log("********* Zappi http status: " + xmlhttp.status)
@@ -146,31 +144,49 @@ App {
 	}
 
 	function collectZappiData() {
-		//console.log("Zappi collecting data");
-		if (settings["hubSerial"].length > 0) {
-			var serialLastDigit = settings["hubSerial"].substr(settings["hubSerial"].length - 1)
+		console.log("Zappi collecting data");
+		//if (settings["hubSerial"].length > 0) {
+		if (zappiASN !== "") {
 			var xmlhttp = new XMLHttpRequest();
-			xmlhttp.open("GET", "https://s" + serialLastDigit + ".myenergi.net/cgi-jstatus-*", true, settings["hubSerial"], settings["hubPassword"]);
-			xmlhttp.setRequestHeader("Authorization", "Digest realm=\"MyEnergi Telemetry\"");
+			//console.log("Zappi ASN url: https://" + zappiASN + "/cgi-jstatus-*");
+			xmlhttp.open("GET", "https://" + zappiASN + "/cgi-jstatus-*", true, settings["hubSerial"], settings["hubPassword"])
 			xmlhttp.onreadystatechange = function() {
 				if (xmlhttp.readyState == XMLHttpRequest.DONE) {
-					//console.log("********* Zappi http status: " + xmlhttp.status)
-					//console.log("********* Zappi headers received: " + xmlhttp.getAllResponseHeaders())
-					//console.log("********* Zappi data received: " + xmlhttp.responseText)
+					console.log("********* Zappi http status: " + xmlhttp.status)
+					console.log("********* Zappi ASN header received: " + xmlhttp.getResponseHeader("x_myenergi-asn"))
+					console.log("********* Zappi data received: " + xmlhttp.responseText)
+					if ((xmlhttp.getResponseHeader("x_myenergi-asn") !== undefined) && (xmlhttp.getResponseHeader("x_myenergi-asn") !== "") ) {
+						var nowASN =  xmlhttp.getResponseHeader("x_myenergi-asn") 
+						if (zappiASN !== nowASN) {
+							console.log("Zappi ASN info from header got changed to: " + nowASN);
+							zappiASNRedirects++
+							zappiASN = nowASN
+						} else {
+							zappiASNRedirects = 0;
+						}
+					}
+					if (zappiASNRedirects > 3) {
+						// the server is redirecting us 3 times in a row to another server. act like login is failing and try again 1 hour later
+						//console.log("********* Zappi too many ASN redirects: " + zappiASNRedirects)
+						zappiValidLogin = false
+						collectData.interval = 3600000
+						return
+					}
 					if (xmlhttp.status !== 200) {
 						collectData.interval = collectData.interval * 2 //this will slowly increase to make sure we don't flood the server with bad logins
 						if (collectData.interval > 3600000) {
 							collectData.interval = 3600000
+							zappiASN = ""; // reset ASN so we check old method again on next attempt
 						} //max at 1 hour interval
 						zappiValidLogin = false
-						console.log("********* Zappi http status: " + xmlhttp.status)
-						console.log("********* Zappi headers received: " + xmlhttp.getAllResponseHeaders())
-						console.log("********* Zappi data received: " + xmlhttp.responseText)
+						//console.log("********* Zappi http status: " + xmlhttp.status)
+						//console.log("********* Zappi headers received: " + xmlhttp.getAllResponseHeaders())
+						//console.log("********* Zappi data received: " + xmlhttp.responseText)
 						return
 					}
 					// we have a valid login, set a faster timer if not already set 
 					zappiValidLogin = true
-					collectData.interval = 30000 //collect every 30 sec
+					collectData.interval = 30000 //collect every 30 sec normally
 					writeZappiDataToFile(xmlhttp.responseText)
 					var jsonResult = JSON.parse(xmlhttp.responseText)
 					for (var i = 0; i < jsonResult.length; i++) {
@@ -185,6 +201,7 @@ App {
 							}
 							if (jsonResult[zappiIndex].zappi[zappiDevices - 1].div !== undefined) {
 								zappiCharging = jsonResult[zappiIndex].zappi[zappiDevices - 1].div
+								collectData.interval = 10000 //collect every 10 sec during charging
 							} else {
 								zappiCharging = 0
 							}
@@ -217,10 +234,46 @@ App {
 							zappiSmartBoostHour = (jsonResult[zappiIndex].zappi[zappiDevices - 1].sbh !== undefined ) ? jsonResult[zappiIndex].zappi[zappiDevices - 1].sbh : 0
 							zappiSmartBoostMinute = (jsonResult[zappiIndex].zappi[zappiDevices - 1].sbm !== undefined ) ? jsonResult[zappiIndex].zappi[zappiDevices - 1].sbm : 0
 						}
+						else if (jsonResult[i].asn !== undefined) {
+							//check if ASN is still same
+							var nowASN = jsonResult[i].asn
+							if (zappiASN !== nowASN) {
+								console.log("Zappi ASN info from json data got changed to: " + nowASN);
+								zappiASNRedirects++
+								zappiASN = nowASN
+							} else {
+								zappiASNRedirects = 0;
+							}
+						}
 					}
 				}
 			}
 			xmlhttp.send();
+		} else if (settings["hubSerial"].length > 0) {
+			console.log("Zappi collecting ASN first");
+			//director returns 401 and this thing isn't receiving headers then... so do check on old server for ASN
+			//var url = "https://director.myenergi.net/"
+			var serialLastDigit = settings["hubSerial"].substr(settings["hubSerial"].length - 1)
+			var url = "https://s" + serialLastDigit + ".myenergi.net/cgi-set-min-green-Z" + zappiSerial + "-" + zappiMinGreenLevel
+			var xmlhttp = new XMLHttpRequest()
+			xmlhttp.open("GET", url, true, settings["hubSerial"], settings["hubPassword"])
+			xmlhttp.onreadystatechange = function() {
+				if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+					//console.log("********* Zappi http status: " + xmlhttp.status)
+					//console.log("********* Zappi headers received: " + xmlhttp.getAllResponseHeaders())
+					//console.log("********* Zappi data received: " + xmlhttp.responseText)
+					if ((xmlhttp.getResponseHeader("x_myenergi-asn") !== undefined) && (xmlhttp.getResponseHeader("x_myenergi-asn") !== "") ) {
+						var nowASN =  xmlhttp.getResponseHeader("x_myenergi-asn") 
+						if (zappiASN !== nowASN) {
+							console.log("Zappi ASN info from header got changed to: " + nowASN);
+							zappiASN = nowASN
+							zappiASNRedirects++;
+							collectData.restart()
+						}
+					}
+				}
+			}
+			xmlhttp.send()
 		}
 	}
 
