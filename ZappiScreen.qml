@@ -126,6 +126,7 @@ Screen {
 	}
 	Text {
 		id: sliderMglTitle
+		visible: (app.zappiState !== 1 && app.zappiMode === 3) //only allow change green level when connected and in eco+ mode
 		anchors {
 			top: zappiModeEco.bottom
 			topMargin: 10
@@ -140,6 +141,7 @@ Screen {
 	}
 	Item {
 		id: sliderMgl;width: 400;height: 30
+		visible: (app.zappiState !== 1 && app.zappiMode === 3) //only allow change green level when connected and in eco+ mode
 		anchors {
 			top: sliderMglTitle.bottom
 			topMargin: 10
@@ -210,6 +212,7 @@ Screen {
 	}
 	Text {
 		id: sliderBoostTitle
+		visible: (app.zappiState !== 1 && (app.zappiMode === 2 || app.zappiMode === 3)) //only allow boost when connected and in eco or eco+ mode
 		anchors {
 			top: sliderMgl.bottom
 			topMargin: 10
@@ -236,7 +239,7 @@ Screen {
 			handleBoost.x = 2 + (value - minimum) * sliderBoost.xMax / (maximum - minimum);
 		}
 		property real maximum: 100
-		property real minimum: 1
+		property real minimum: 0
 		property int xMax: sliderBoost.width - handleBoost.width - 4
 		Rectangle {
 			anchors.fill: parent
@@ -257,7 +260,6 @@ Screen {
 			onClicked: {
 				var pos = Math.round(mouse.x / sliderBoost.width * (sliderBoost.maximum - sliderBoost.minimum) + sliderBoost.minimum)
 				sliderBoost.value = pos
-				//app.changeZappiMinGreenLevelDelayed(sliderBoost.value)
 			}
 		}
 		Rectangle {
@@ -288,7 +290,6 @@ Screen {
 				drag.maximumX: sliderBoost.xMax + 2
 				onPositionChanged: {
 					sliderBoost.value = Math.round((sliderBoost.maximum - sliderBoost.minimum) * (handleBoost.x - 2) / sliderBoost.xMax + sliderBoost.minimum)
-					//app.changeZappiMinGreenLevelDelayed(slider.value)
 				}
 			}
 		}
@@ -296,18 +297,19 @@ Screen {
         StandardButton {
                 id: zappiBoostNow
                 width: 250
-		visible: (app.zappiState !== 1 && (app.zappiMode === 2 || app.zappiMode === 3)) //only allow boost when connected and in eco or eco+ mode
+		visible: (app.zappiState !== 1 && (app.zappiMode === 2 || app.zappiMode === 3)) &&  sliderBoost.value > 0  //only allow boost when connected and in eco or eco+ mode
                 text: app.zappiBoostMode ? "Boosting" : "Boost now"
                 primary: app.zappiBoostMode
                 anchors.verticalCenter: sliderBoost.verticalCenter
                 anchors.right: sliderBoost.left 
                 anchors.rightMargin: 10 
                 onClicked: {
-                        //app.changeZappiMode(2)
+                        app.setZappiBoostMode(sliderBoost.value)
                 }
         }
 	Text {
 		id: sliderSmartBoostTitle
+		visible: (app.zappiState !== 1 && (app.zappiMode === 2 || app.zappiMode === 3)) //only allow boost when connected and in eco or eco+ mode
 		anchors {
 			top: sliderBoost.bottom
 			topMargin: 10
@@ -334,7 +336,7 @@ Screen {
 			handleSmartBoost.x = 2 + (value - minimum) * sliderSmartBoost.xMax / (maximum - minimum);
 		}
 		property real maximum: 100
-		property real minimum: 1
+		property real minimum: 0
 		property int xMax: sliderSmartBoost.width - handleSmartBoost.width - 4
 		Rectangle {
 			anchors.fill: parent
@@ -355,7 +357,6 @@ Screen {
 			onClicked: {
 				var pos = Math.round(mouse.x / sliderSmartBoost.width * (sliderSmartBoost.maximum - sliderSmartBoost.minimum) + sliderSmartBoost.minimum)
 				sliderSmartBoost.value = pos
-				//app.changeZappiMinGreenLevelDelayed(sliderSmartBoost.value)
 			}
 		}
 		Rectangle {
@@ -386,7 +387,6 @@ Screen {
 				drag.maximumX: sliderSmartBoost.xMax + 2
 				onPositionChanged: {
 					sliderSmartBoost.value = Math.round((sliderSmartBoost.maximum - sliderSmartBoost.minimum) * (handleSmartBoost.x - 2) / sliderSmartBoost.xMax + sliderSmartBoost.minimum)
-					//app.changeZappiMinGreenLevelDelayed(slider.value)
 				}
 			}
 		}
@@ -394,18 +394,19 @@ Screen {
         StandardButton {
                 id: zappiSmartBoostNow
                 width: 250
-		visible: (app.zappiState !== 1 && (app.zappiMode === 2 || app.zappiMode === 3)) //only allow boost when connected and in eco or eco+ mode
+		visible: (app.zappiState !== 1 && (app.zappiMode === 2 || app.zappiMode === 3)) && sliderSmartBoost.value > 0 //only allow boost when connected and in eco or eco+ mode
                 text: app.zappiSmartBoostMode ? "Smart boosting" : "Smart boost now"
                 primary: app.zappiSmartBoostMode
                 anchors.verticalCenter: sliderSmartBoost.verticalCenter
                 anchors.right: sliderSmartBoost.left 
                 anchors.rightMargin: 10 
                 onClicked: {
-                        //app.changeZappiMode(2)
+                        app.setZappiSmartBoostMode(sliderSmartBoost.value,nsHour.value,nsMinute.value)
                 }
         }
         NumberSpinner {
                 id: nsHour
+		visible: (app.zappiState !== 1 && (app.zappiMode === 2 || app.zappiMode === 3))  && sliderSmartBoost.value > 0 //only allow boost when connected and in eco or eco+ mode
                 anchors {
 			verticalCenter : sliderSmartBoost.verticalCenter
                         left: sliderSmartBoost.right
@@ -414,7 +415,7 @@ Screen {
                 rangeMin: 0
                 rangeMax: 23
                 increment: 1
-                value: 0
+                value: app.zappiSmartBoostHour
                 wrapAtMaximum: true
                 wrapAtMinimum: true
 		implicitWidth: Math.round(90 * horizontalScaling)
@@ -426,6 +427,7 @@ Screen {
         }
         NumberSpinner {
                 id: nsMinute
+		visible: (app.zappiState !== 1 && (app.zappiMode === 2 || app.zappiMode === 3))  && sliderSmartBoost.value > 0 //only allow boost when connected and in eco or eco+ mode
 		anchors {
 			verticalCenter : sliderSmartBoost.verticalCenter
                         left: nsHour.right
@@ -434,7 +436,7 @@ Screen {
                 rangeMin: 0
                 rangeMax: 45
                 increment: 15
-                value: 0
+                value: app.zappiSmartBoostMinute 
                 wrapAtMaximum: true
                 wrapAtMinimum: true
 		implicitWidth: Math.round(90 * horizontalScaling)
@@ -446,6 +448,7 @@ Screen {
         }
         Text {
                 id: colon
+		visible: (app.zappiState !== 1 && (app.zappiMode === 2 || app.zappiMode === 3))  && sliderSmartBoost.value > 0  //only allow boost when connected and in eco or eco+ mode
                 anchors {
                         left: nsHour.right
                         right: nsMinute.left
@@ -460,6 +463,7 @@ Screen {
         }
         Text {
                 id: smartBoostTimeText 
+		visible: (app.zappiState !== 1 && (app.zappiMode === 2 || app.zappiMode === 3))  && sliderSmartBoost.value > 0  //only allow boost when connected and in eco or eco+ mode
                 anchors {
                         verticalCenter: sliderSmartBoostTitle.verticalCenter 
                         horizontalCenter: colon.horizontalCenter

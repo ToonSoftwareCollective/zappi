@@ -100,11 +100,16 @@ App {
 		collectData.restart()
 	}
 
-	function changeZappiMode(newZappiMode) {
+	function setZappiBoostMode(newBoostkWh) {
 		// here a call to url to change zappi mode
-		zappiMode = newZappiMode
+		zappiBoostMode = !zappiBoostMode
+		zappiBoostkWh = newBoostkWh 
 		if (zappiASN !== "") {
-			var url = "https://" + zappiASN + "/cgi-set-min-green-Z" + zappiSerial + "-" + zappiMinGreenLevel
+			var url = "https://" + zappiASN + "/cgi-zappi-mode-Z" + zappiSerial + "-0-10-" + zappiBoostkWh + "-0000"	
+			if (!zappiBoostMode) {
+				zappiBoostkWh = 0
+				url = "https://" + zappiASN + "/cgi-zappi-mode-Z" + zappiSerial + "-0-2-0-0000"	
+			}
 			//console.log("Zappi set mode url: " + url)
 			var xmlhttp = new XMLHttpRequest()
 			xmlhttp.open("GET", url, true, settings["hubSerial"], settings["hubPassword"])
@@ -113,6 +118,61 @@ App {
 					//console.log("********* Zappi http status: " + xmlhttp.status)
 					//console.log("********* Zappi headers received: " + xmlhttp.getAllResponseHeaders())
 					//console.log("********* Zappi data received: " + xmlhttp.responseText)
+					collectData.interval = 30000 //set next interval to 30 secs for the set request to fullfill
+				}
+			}
+			xmlhttp.send()
+		}
+	}
+
+	function padNumber(num, len) {
+        	var result = String(num)
+         	len = len - result.length
+		for (var i = 0; i < len; i++) {
+                	result = "0" + result
+            	}
+            	return result 
+        }
+
+	function setZappiSmartBoostMode(newSmartBoostkWh, setHour, setMinute) {
+		// here a call to url to change zappi mode
+		zappiSmartBoostMode = !zappiSmartBoostMode
+		zappiSmartBoostkWh = newSmartBoostkWh 
+		if (zappiASN !== "") {
+			var url = "https://" + zappiASN + "/cgi-zappi-mode-Z" + zappiSerial + "-0-11-" + zappiSmartBoostkWh + "-" + padNumber(setHour,2) + padNumber(setMinute,2) 
+			if (!zappiSmartBoostMode) {
+				zappiSmartBoostkWh = 0
+				url = "https://" + zappiASN + "/cgi-zappi-mode-Z" + zappiSerial + "-0-2-0-0000"	
+			}
+			//console.log("Zappi set mode url: " + url)
+			var xmlhttp = new XMLHttpRequest()
+			xmlhttp.open("GET", url, true, settings["hubSerial"], settings["hubPassword"])
+			xmlhttp.onreadystatechange = function() {
+				if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+					//console.log("********* Zappi http status: " + xmlhttp.status)
+					//console.log("********* Zappi headers received: " + xmlhttp.getAllResponseHeaders())
+					//console.log("********* Zappi data received: " + xmlhttp.responseText)
+					collectData.interval = 30000 //set next interval to 30 secs for the set request to fullfill
+				}
+			}
+			xmlhttp.send()
+		}
+	}
+
+	function changeZappiMode(newZappiMode) {
+		// here a call to url to change zappi mode
+		zappiMode = newZappiMode
+		if (zappiASN !== "") {
+			var url = "https://" + zappiASN + "/cgi-zappi-mode-Z" + zappiSerial + "-" + zappiMode + "-0-0-0000"	
+			//console.log("Zappi set mode url: " + url)
+			var xmlhttp = new XMLHttpRequest()
+			xmlhttp.open("GET", url, true, settings["hubSerial"], settings["hubPassword"])
+			xmlhttp.onreadystatechange = function() {
+				if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+					//console.log("********* Zappi http status: " + xmlhttp.status)
+					//console.log("********* Zappi headers received: " + xmlhttp.getAllResponseHeaders())
+					//console.log("********* Zappi data received: " + xmlhttp.responseText)
+					collectData.interval = 30000 //set next interval to 30 secs for the set request to fullfill
 				}
 			}
 			xmlhttp.send()
@@ -145,8 +205,7 @@ App {
 	}
 
 	function collectZappiData() {
-		console.log("Zappi collecting data");
-		//if (settings["hubSerial"].length > 0) {
+		//console.log("Zappi collecting data");
 		if (zappiASN !== "") {
 			var xmlhttp = new XMLHttpRequest();
 			//console.log("Zappi ASN url: https://" + zappiASN + "/cgi-jstatus-*");
