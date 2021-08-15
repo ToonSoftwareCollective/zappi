@@ -224,7 +224,7 @@ App {
 					if ((xmlhttp.getResponseHeader("x_myenergi-asn") !== undefined) && (xmlhttp.getResponseHeader("x_myenergi-asn") !== "") ) {
 						var nowASN =  xmlhttp.getResponseHeader("x_myenergi-asn") 
 						if (zappiASN !== nowASN) {
-							console.log("Zappi ASN info from header got changed to: " + nowASN);
+							//console.log("Zappi ASN info from header got changed to: " + nowASN);
 							zappiASNRedirects++
 							zappiASN = nowASN
 						} else {
@@ -320,7 +320,7 @@ App {
 							//check if ASN is still same
 							var nowASN = jsonResult[i].asn
 							if (zappiASN !== nowASN) {
-								console.log("Zappi ASN info from json data got changed to: " + nowASN);
+								//console.log("Zappi ASN info from json data got changed to: " + nowASN);
 								zappiASNRedirects++
 								zappiASN = nowASN
 							} else {
@@ -347,7 +347,7 @@ App {
 					if ((xmlhttp.getResponseHeader("x_myenergi-asn") !== undefined) && (xmlhttp.getResponseHeader("x_myenergi-asn") !== "") ) {
 						var nowASN =  xmlhttp.getResponseHeader("x_myenergi-asn") 
 						if (zappiASN !== nowASN) {
-							console.log("Zappi ASN info from header got changed to: " + nowASN);
+							//console.log("Zappi ASN info from header got changed to: " + nowASN);
 							zappiASN = nowASN
 							zappiASNRedirects++;
 							collectData.restart()
