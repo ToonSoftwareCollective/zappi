@@ -107,4 +107,30 @@ Screen {
 		font.pixelSize: isNxt ? 30 : 20
 		font.family: qfont.regular.name
 	}
+	Text {
+		id: txtZappiScreenLock
+		text: "Screen locked: " + app.zappiScreenLocked
+		color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor
+		anchors {
+			top: txtZappiChargekWh.bottom
+			topMargin: 0
+			horizontalCenter: parent.horizontalCenter
+		}
+		horizontalAlignment: Text.AlignHCenter
+		font.pixelSize: isNxt ? 30 : 20
+		font.family: qfont.regular.name
+	}
+	Text {
+		id: txtZappiChargingAllowed
+		text: "Charging allowed: " + app.zappiChargingAllowed
+		color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor
+		anchors {
+			top: txtZappiScreenLock.bottom
+			topMargin: 0
+			horizontalCenter: parent.horizontalCenter
+		}
+		horizontalAlignment: Text.AlignHCenter
+		font.pixelSize: isNxt ? 30 : 20
+		font.family: qfont.regular.name
+	}
 }

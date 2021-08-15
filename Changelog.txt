@@ -2,6 +2,7 @@
 -add ASN redirect by server
 -charge animation speed depening on 3 fase or 1 fase charging
 -boost and smart boost support 
+-add screen and charge lock status in info screen
 
 1.3.0
 -add stop mode button which is available on zappi v3 firmware

@@ -52,6 +52,12 @@ App {
 	property int zappiSmartBoostHour
 	property int zappiSmartBoostMinute
 	property bool zappiValidLogin: false
+	property int  zappiLck: 0
+	property bool zappiScreenLocked: false
+	property bool zappiScreenLockConnected: false
+	property bool zappiScreenLockDisconnected: false
+	property bool zappiAllowChargeWhileScreenLock: false
+	property bool zappiChargingAllowed: false
 	function init() {
 		registry.registerWidget("screen", zappiScreenUrl, this);
 		registry.registerWidget("screen", zappiInfoUrl, this, "zappiInfo");
@@ -285,6 +291,7 @@ App {
 							var tmpZappiStateText = zappiStateText
 							tmpZappiStateText["B1"] = "Not charging"
 							if (zappiMode === 3) {
+								//if zappi is in charging mode change the B1 text from 'not charging' to 'waiting for surplus'
 								tmpZappiStateText["B1"] = "Waiting for surplus"
 							}
 							zappiStateText = tmpZappiStateText
@@ -302,6 +309,12 @@ App {
 							zappiSmartBoostkWh = (jsonResult[zappiIndex].zappi[zappiDevices - 1].sbk !== undefined ) ? jsonResult[zappiIndex].zappi[zappiDevices - 1].sbk : 0
 							zappiSmartBoostHour = (jsonResult[zappiIndex].zappi[zappiDevices - 1].sbh !== undefined ) ? jsonResult[zappiIndex].zappi[zappiDevices - 1].sbh : 0
 							zappiSmartBoostMinute = (jsonResult[zappiIndex].zappi[zappiDevices - 1].sbm !== undefined ) ? jsonResult[zappiIndex].zappi[zappiDevices - 1].sbm : 0
+							zappiLck = (jsonResult[zappiIndex].zappi[zappiDevices - 1].lck !== undefined ) ? jsonResult[zappiIndex].zappi[zappiDevices - 1].lck : 0
+							zappiScreenLocked = (zappiLck & 1)
+							zappiScreenLockConnected = (zappiLck & 2)
+							zappiScreenLockDisconnected = (zappiLck & 4)
+							zappiAllowChargeWhileScreenLock = (zappiLck & 8)
+							zappiChargingAllowed = (zappiLck & 16)
 						}
 						else if (jsonResult[i].asn !== undefined) {
 							//check if ASN is still same
