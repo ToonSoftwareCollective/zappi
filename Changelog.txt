@@ -1,3 +1,6 @@
+1.5.0
+-add new ASN detect
+
 1.4.0
 -add ASN redirect by server
 -charge animation speed depening on 3 fase or 1 fase charging

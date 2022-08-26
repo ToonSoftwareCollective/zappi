@@ -17,8 +17,10 @@ App {
 	property variant settings: {
 		"hubSerial": "",
 		"hubPassword": "",
+		"cachedASN": "",
 	}
 	property variant zappiASN: ""
+	property int zappiASNIndex: 10
 	property int zappiASNRedirects: 0
 	property int zappiIndex
 	property int zappiDevices
@@ -332,30 +334,40 @@ App {
 			}
 			xmlhttp.send();
 		} else if (settings["hubSerial"].length > 0) {
-			console.log("Zappi collecting ASN first");
-			//director returns 401 and this thing isn't receiving headers then... so do check on old server for ASN
-			//var url = "https://director.myenergi.net/"
-			var serialLastDigit = settings["hubSerial"].substr(settings["hubSerial"].length - 1)
-			var url = "https://s" + serialLastDigit + ".myenergi.net/cgi-set-min-green-Z" + zappiSerial + "-" + zappiMinGreenLevel
-			var xmlhttp = new XMLHttpRequest()
-			xmlhttp.open("GET", url, true, settings["hubSerial"], settings["hubPassword"])
-			xmlhttp.onreadystatechange = function() {
-				if (xmlhttp.readyState == XMLHttpRequest.DONE) {
-					//console.log("********* Zappi http status: " + xmlhttp.status)
-					//console.log("********* Zappi headers received: " + xmlhttp.getAllResponseHeaders())
-					//console.log("********* Zappi data received: " + xmlhttp.responseText)
-					if ((xmlhttp.getResponseHeader("x_myenergi-asn") !== undefined) && (xmlhttp.getResponseHeader("x_myenergi-asn") !== "") ) {
-						var nowASN =  xmlhttp.getResponseHeader("x_myenergi-asn") 
-						if (zappiASN !== nowASN) {
-							//console.log("Zappi ASN info from header got changed to: " + nowASN);
-							zappiASN = nowASN
-							zappiASNRedirects++;
-							collectData.restart()
-						}
-					}
-				}
+			  console.log("Zappi collecting ASN first");
+			  //director returns 401 and this thing isn't receiving headers then... so do check on old server for ASN
+			  var url = "https://s" + zappiASNIndex + ".myenergi.net/cgi-jstatus-*"
+			  if (settings["cachedASN"] !== "") {
+				url = "https://" + settings["cachedASN"] + "/cgi-jstatus-*";
+				settings["cachedASN"] = "";
+			  }
+			  var xmlhttp = new XMLHttpRequest()
+			  xmlhttp.open("GET", url, true, settings["hubSerial"], settings["hubPassword"])
+			  xmlhttp.timeout = 2000;
+			  xmlhttp.onreadystatechange = function() {
+			    if  (xmlhttp.readyState == XMLHttpRequest.DONE) {
+				console.log("********* Zappi http status: " + xmlhttp.status)
+				console.log("********* Zappi headers received: " + xmlhttp.getAllResponseHeaders())
+				console.log("********* Zappi data received: " + xmlhttp.responseText)
+				if ((xmlhttp.getResponseHeader("x_myenergi-asn") !== undefined) && (xmlhttp.getResponseHeader("x_myenergi-asn") !== "") ) {
+					var nowASN =  xmlhttp.getResponseHeader("x_myenergi-asn") 
+					if (zappiASN !== nowASN) {
+						console.log("Zappi ASN info from header got changed to: " + nowASN);
+						zappiASN = nowASN
+						zappiASNRedirects++;
+						settings["cachedASN"] = zappiASN;
+						saveSettings();
+			        	}
+			        }
+			    }
+  	 		    collectData.restart()
+ 			  }
+			  xmlhttp.send()
+			  console.log("Zappi ASN url: " + url);
+			  zappiASNIndex++;
+			  if (zappiASNIndex > 20) {
+				zappiASNIndex = 10;
 			}
-			xmlhttp.send()
 		}
 	}
 
