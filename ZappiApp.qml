@@ -20,7 +20,7 @@ App {
 		"cachedASN": "",
 	}
 	property variant zappiASN: ""
-	property int zappiASNIndex: 10
+	property int zappiASNIndex: 18 //start with s18 server which seems to be the only correct api server
 	property int zappiASNRedirects: 0
 	property int zappiIndex
 	property int zappiDevices
@@ -335,7 +335,7 @@ App {
 			xmlhttp.send();
 		} else if (settings["hubSerial"].length > 0) {
 			  console.log("Zappi collecting ASN first");
-			  //director returns 401 and this thing isn't receiving headers then... so do check on old server for ASN
+			  //director returns 401 and this thing isn't receiving headers then... so do check on all servers for ASN
 			  var url = "https://s" + zappiASNIndex + ".myenergi.net/cgi-jstatus-*"
 			  if (settings["cachedASN"] !== "") {
 				url = "https://" + settings["cachedASN"] + "/cgi-jstatus-*";

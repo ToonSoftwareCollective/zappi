@@ -56,11 +56,24 @@ Screen {
 			right: parent.right
 			rightMargin: isNxt ? 100 : 80
 		}
-		labelText: qsTr("MyEnergi hub password")
+		labelText: qsTr("MyEnergi API-key")
 		prefilledText: app.settings.hubPassword
 		leftTextAvailableWidth: Math.max(serialNumberInput.leftTextImplicitWidth, passwordInput.leftTextImplicitWidth) + Math.round(30 * horizontalScaling)
 		isPassword: true
 		inputHints: Qt.ImhNoAutoUppercase | Qt.ImhSensitiveData
 		maxLength: 64
 	}
+        Text {
+                id: txtZappiAPI
+                text: "Get a API-key from the https://myaccount.myenergi.com website"
+                color: (typeof dimmableColors !== 'undefined') ? dimmableColors.clockTileColor : colors.clockTileColor
+                anchors {
+                        top: passwordInput.bottom
+                        topMargin: 10
+                        horizontalCenter: parent.horizontalCenter
+                }
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: isNxt ? 30 : 20
+                font.family: qfont.regular.name
+        }
 }
